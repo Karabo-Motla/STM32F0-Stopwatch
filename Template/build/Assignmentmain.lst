@@ -1,0 +1,2022 @@
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"Assignmentmain.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/Assignmentmain.c"
+  18              		.section	.text.initGPIO,"ax",%progbits
+  19              		.align	1
+  20              		.global	initGPIO
+  21              		.syntax unified
+  22              		.code	16
+  23              		.thumb_func
+  25              	initGPIO:
+  26              	.LFB43:
+   1:Core/Src/Assignmentmain.c **** #include <stdio.h>
+   2:Core/Src/Assignmentmain.c **** #include "stm32f0xx.h"
+   3:Core/Src/Assignmentmain.c **** #include "lcd_stm32f0.h"
+   4:Core/Src/Assignmentmain.c **** 
+   5:Core/Src/Assignmentmain.c **** #define TRUE 1
+   6:Core/Src/Assignmentmain.c **** #define FALSE 0
+   7:Core/Src/Assignmentmain.c **** 
+   8:Core/Src/Assignmentmain.c **** // Define global flag variables
+   9:Core/Src/Assignmentmain.c **** volatile uint8_t startFlag = FALSE;
+  10:Core/Src/Assignmentmain.c **** volatile uint8_t lapFlag = FALSE;
+  11:Core/Src/Assignmentmain.c **** volatile uint8_t stopFlag = TRUE;
+  12:Core/Src/Assignmentmain.c **** volatile uint8_t resetFlag = TRUE;
+  13:Core/Src/Assignmentmain.c **** 
+  14:Core/Src/Assignmentmain.c **** // Timer variables
+  15:Core/Src/Assignmentmain.c **** volatile uint8_t minutes = 0;
+  16:Core/Src/Assignmentmain.c **** volatile uint8_t seconds = 0;
+  17:Core/Src/Assignmentmain.c **** volatile uint8_t hundredths = 0;
+  18:Core/Src/Assignmentmain.c **** //Lap variables
+  19:Core/Src/Assignmentmain.c **** volatile uint8_t lapMinutes = 0;
+  20:Core/Src/Assignmentmain.c **** volatile uint8_t lapSeconds = 0;
+  21:Core/Src/Assignmentmain.c **** volatile uint8_t lapHundredths = 0;
+  22:Core/Src/Assignmentmain.c **** 
+  23:Core/Src/Assignmentmain.c **** 
+  24:Core/Src/Assignmentmain.c **** // Function prototypes
+  25:Core/Src/Assignmentmain.c **** void initGPIO(void);
+  26:Core/Src/Assignmentmain.c **** void initTIM14(void);
+  27:Core/Src/Assignmentmain.c **** void checkPB(void);
+  28:Core/Src/Assignmentmain.c **** void display(void);
+  29:Core/Src/Assignmentmain.c **** void delay_ms(uint32_t milliseconds);
+  30:Core/Src/Assignmentmain.c **** 
+  31:Core/Src/Assignmentmain.c **** void initGPIO(void) {
+  27              		.loc 1 31 21 view -0
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 2
+
+
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32:Core/Src/Assignmentmain.c ****     RCC->AHBENR |= RCC_AHBENR_GPIOAEN; // Enable clock for GPIO port B
+  32              		.loc 1 32 5 view .LVU1
+  33              		.loc 1 32 8 is_stmt 0 view .LVU2
+  34 0000 0D4B     		ldr	r3, .L2
+  35 0002 5969     		ldr	r1, [r3, #20]
+  36              		.loc 1 32 17 view .LVU3
+  37 0004 8022     		movs	r2, #128
+  38 0006 9202     		lsls	r2, r2, #10
+  39 0008 0A43     		orrs	r2, r1
+  40 000a 5A61     		str	r2, [r3, #20]
+  33:Core/Src/Assignmentmain.c **** 
+  34:Core/Src/Assignmentmain.c ****     // Set PB0, PB1, PB2, and PB3 as input for buttons
+  35:Core/Src/Assignmentmain.c ****     GPIOA->MODER &= ~(GPIO_MODER_MODER0|GPIO_MODER_MODER1|GPIO_MODER_MODER2|GPIO_MODER_MODER3);
+  41              		.loc 1 35 5 is_stmt 1 view .LVU4
+  42              		.loc 1 35 10 is_stmt 0 view .LVU5
+  43 000c 9022     		movs	r2, #144
+  44 000e D205     		lsls	r2, r2, #23
+  45 0010 1168     		ldr	r1, [r2]
+  46              		.loc 1 35 18 view .LVU6
+  47 0012 FF20     		movs	r0, #255
+  48 0014 8143     		bics	r1, r0
+  49 0016 1160     		str	r1, [r2]
+  36:Core/Src/Assignmentmain.c ****     GPIOA->PUPDR |= (GPIO_PUPDR_PUPDR0_0|GPIO_PUPDR_PUPDR1_0|GPIO_PUPDR_PUPDR2_0|GPIO_PUPDR_PUPDR3_
+  50              		.loc 1 36 5 is_stmt 1 view .LVU7
+  51              		.loc 1 36 10 is_stmt 0 view .LVU8
+  52 0018 D168     		ldr	r1, [r2, #12]
+  53              		.loc 1 36 18 view .LVU9
+  54 001a AA38     		subs	r0, r0, #170
+  55 001c 0143     		orrs	r1, r0
+  56 001e D160     		str	r1, [r2, #12]
+  37:Core/Src/Assignmentmain.c ****     // GPIOB - LEDs
+  38:Core/Src/Assignmentmain.c **** 	// Enable the clock GPIOB
+  39:Core/Src/Assignmentmain.c **** 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+  57              		.loc 1 39 2 is_stmt 1 view .LVU10
+  58              		.loc 1 39 5 is_stmt 0 view .LVU11
+  59 0020 5969     		ldr	r1, [r3, #20]
+  60              		.loc 1 39 14 view .LVU12
+  61 0022 8022     		movs	r2, #128
+  62 0024 D202     		lsls	r2, r2, #11
+  63 0026 0A43     		orrs	r2, r1
+  64 0028 5A61     		str	r2, [r3, #20]
+  40:Core/Src/Assignmentmain.c **** 	// Set PB0-B7, P10-PB11 to output mode
+  41:Core/Src/Assignmentmain.c **** 	GPIOB->MODER |= (GPIO_MODER_MODER0_0|GPIO_MODER_MODER1_0|GPIO_MODER_MODER2_0|GPIO_MODER_MODER3_0);
+  65              		.loc 1 41 2 is_stmt 1 view .LVU13
+  66              		.loc 1 41 7 is_stmt 0 view .LVU14
+  67 002a 044B     		ldr	r3, .L2+4
+  68 002c 1A68     		ldr	r2, [r3]
+  69              		.loc 1 41 15 view .LVU15
+  70 002e 0243     		orrs	r2, r0
+  71 0030 1A60     		str	r2, [r3]
+  42:Core/Src/Assignmentmain.c **** 	
+  43:Core/Src/Assignmentmain.c ****     // Turn all LEDs OFF
+  44:Core/Src/Assignmentmain.c **** 	GPIOB->ODR = 0;
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 3
+
+
+  72              		.loc 1 44 2 is_stmt 1 view .LVU16
+  73              		.loc 1 44 13 is_stmt 0 view .LVU17
+  74 0032 0022     		movs	r2, #0
+  75 0034 5A61     		str	r2, [r3, #20]
+  45:Core/Src/Assignmentmain.c **** }
+  76              		.loc 1 45 1 view .LVU18
+  77              		@ sp needed
+  78 0036 7047     		bx	lr
+  79              	.L3:
+  80              		.align	2
+  81              	.L2:
+  82 0038 00100240 		.word	1073876992
+  83 003c 00040048 		.word	1207960576
+  84              		.cfi_endproc
+  85              	.LFE43:
+  87              		.section	.text.initTIM14,"ax",%progbits
+  88              		.align	1
+  89              		.global	initTIM14
+  90              		.syntax unified
+  91              		.code	16
+  92              		.thumb_func
+  94              	initTIM14:
+  95              	.LFB44:
+  46:Core/Src/Assignmentmain.c **** 
+  47:Core/Src/Assignmentmain.c **** void initTIM14(void) {
+  96              		.loc 1 47 22 is_stmt 1 view -0
+  97              		.cfi_startproc
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100              		@ link register save eliminated.
+  48:Core/Src/Assignmentmain.c ****     RCC->APB1ENR |= RCC_APB1ENR_TIM14EN; // Enable clock for TIM14
+ 101              		.loc 1 48 5 view .LVU20
+ 102              		.loc 1 48 8 is_stmt 0 view .LVU21
+ 103 0000 0B4A     		ldr	r2, .L5
+ 104 0002 D169     		ldr	r1, [r2, #28]
+ 105              		.loc 1 48 18 view .LVU22
+ 106 0004 8023     		movs	r3, #128
+ 107 0006 5B00     		lsls	r3, r3, #1
+ 108 0008 0B43     		orrs	r3, r1
+ 109 000a D361     		str	r3, [r2, #28]
+  49:Core/Src/Assignmentmain.c ****     TIM14->PSC = 479;                   // Set prescaler to 4799 (count every 0.1 ms)
+ 110              		.loc 1 49 5 is_stmt 1 view .LVU23
+ 111              		.loc 1 49 16 is_stmt 0 view .LVU24
+ 112 000c 094B     		ldr	r3, .L5+4
+ 113 000e E022     		movs	r2, #224
+ 114 0010 FF32     		adds	r2, r2, #255
+ 115 0012 9A62     		str	r2, [r3, #40]
+  50:Core/Src/Assignmentmain.c ****     TIM14->ARR = 999;                    // Set auto-reload to 199 (0.01 s)
+ 116              		.loc 1 50 5 is_stmt 1 view .LVU25
+ 117              		.loc 1 50 16 is_stmt 0 view .LVU26
+ 118 0014 084A     		ldr	r2, .L5+8
+ 119 0016 DA62     		str	r2, [r3, #44]
+  51:Core/Src/Assignmentmain.c ****     TIM14->DIER |= TIM_DIER_UIE;         // Enable update interrupt
+ 120              		.loc 1 51 5 is_stmt 1 view .LVU27
+ 121              		.loc 1 51 10 is_stmt 0 view .LVU28
+ 122 0018 DA68     		ldr	r2, [r3, #12]
+ 123              		.loc 1 51 17 view .LVU29
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 4
+
+
+ 124 001a 0121     		movs	r1, #1
+ 125 001c 0A43     		orrs	r2, r1
+ 126 001e DA60     		str	r2, [r3, #12]
+  52:Core/Src/Assignmentmain.c ****     NVIC_EnableIRQ(TIM14_IRQn);          // Enable TIM14 interrupt in NVIC
+ 127              		.loc 1 52 5 is_stmt 1 view .LVU30
+ 128              	.LVL0:
+ 129              	.LBB4:
+ 130              	.LBI4:
+ 131              		.file 2 "Drivers/CMSIS/Include/core_cm0.h"
+   1:Drivers/CMSIS/Include/core_cm0.h **** /**************************************************************************//**
+   2:Drivers/CMSIS/Include/core_cm0.h ****  * @file     core_cm0.h
+   3:Drivers/CMSIS/Include/core_cm0.h ****  * @brief    CMSIS Cortex-M0 Core Peripheral Access Layer Header File
+   4:Drivers/CMSIS/Include/core_cm0.h ****  * @version  V5.0.5
+   5:Drivers/CMSIS/Include/core_cm0.h ****  * @date     28. May 2018
+   6:Drivers/CMSIS/Include/core_cm0.h ****  ******************************************************************************/
+   7:Drivers/CMSIS/Include/core_cm0.h **** /*
+   8:Drivers/CMSIS/Include/core_cm0.h ****  * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
+   9:Drivers/CMSIS/Include/core_cm0.h ****  *
+  10:Drivers/CMSIS/Include/core_cm0.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:Drivers/CMSIS/Include/core_cm0.h ****  *
+  12:Drivers/CMSIS/Include/core_cm0.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:Drivers/CMSIS/Include/core_cm0.h ****  * not use this file except in compliance with the License.
+  14:Drivers/CMSIS/Include/core_cm0.h ****  * You may obtain a copy of the License at
+  15:Drivers/CMSIS/Include/core_cm0.h ****  *
+  16:Drivers/CMSIS/Include/core_cm0.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:Drivers/CMSIS/Include/core_cm0.h ****  *
+  18:Drivers/CMSIS/Include/core_cm0.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:Drivers/CMSIS/Include/core_cm0.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:Drivers/CMSIS/Include/core_cm0.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:Drivers/CMSIS/Include/core_cm0.h ****  * See the License for the specific language governing permissions and
+  22:Drivers/CMSIS/Include/core_cm0.h ****  * limitations under the License.
+  23:Drivers/CMSIS/Include/core_cm0.h ****  */
+  24:Drivers/CMSIS/Include/core_cm0.h **** 
+  25:Drivers/CMSIS/Include/core_cm0.h **** #if   defined ( __ICCARM__ )
+  26:Drivers/CMSIS/Include/core_cm0.h ****   #pragma system_include         /* treat file as system include file for MISRA check */
+  27:Drivers/CMSIS/Include/core_cm0.h **** #elif defined (__clang__)
+  28:Drivers/CMSIS/Include/core_cm0.h ****   #pragma clang system_header   /* treat file as system include file */
+  29:Drivers/CMSIS/Include/core_cm0.h **** #endif
+  30:Drivers/CMSIS/Include/core_cm0.h **** 
+  31:Drivers/CMSIS/Include/core_cm0.h **** #ifndef __CORE_CM0_H_GENERIC
+  32:Drivers/CMSIS/Include/core_cm0.h **** #define __CORE_CM0_H_GENERIC
+  33:Drivers/CMSIS/Include/core_cm0.h **** 
+  34:Drivers/CMSIS/Include/core_cm0.h **** #include <stdint.h>
+  35:Drivers/CMSIS/Include/core_cm0.h **** 
+  36:Drivers/CMSIS/Include/core_cm0.h **** #ifdef __cplusplus
+  37:Drivers/CMSIS/Include/core_cm0.h ****  extern "C" {
+  38:Drivers/CMSIS/Include/core_cm0.h **** #endif
+  39:Drivers/CMSIS/Include/core_cm0.h **** 
+  40:Drivers/CMSIS/Include/core_cm0.h **** /**
+  41:Drivers/CMSIS/Include/core_cm0.h ****   \page CMSIS_MISRA_Exceptions  MISRA-C:2004 Compliance Exceptions
+  42:Drivers/CMSIS/Include/core_cm0.h ****   CMSIS violates the following MISRA-C:2004 rules:
+  43:Drivers/CMSIS/Include/core_cm0.h **** 
+  44:Drivers/CMSIS/Include/core_cm0.h ****    \li Required Rule 8.5, object/function definition in header file.<br>
+  45:Drivers/CMSIS/Include/core_cm0.h ****      Function definitions in header files are used to allow 'inlining'.
+  46:Drivers/CMSIS/Include/core_cm0.h **** 
+  47:Drivers/CMSIS/Include/core_cm0.h ****    \li Required Rule 18.4, declaration of union type or object of union type: '{...}'.<br>
+  48:Drivers/CMSIS/Include/core_cm0.h ****      Unions are used for effective representation of core registers.
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 5
+
+
+  49:Drivers/CMSIS/Include/core_cm0.h **** 
+  50:Drivers/CMSIS/Include/core_cm0.h ****    \li Advisory Rule 19.7, Function-like macro defined.<br>
+  51:Drivers/CMSIS/Include/core_cm0.h ****      Function-like macros are used to allow more efficient code.
+  52:Drivers/CMSIS/Include/core_cm0.h ****  */
+  53:Drivers/CMSIS/Include/core_cm0.h **** 
+  54:Drivers/CMSIS/Include/core_cm0.h **** 
+  55:Drivers/CMSIS/Include/core_cm0.h **** /*******************************************************************************
+  56:Drivers/CMSIS/Include/core_cm0.h ****  *                 CMSIS definitions
+  57:Drivers/CMSIS/Include/core_cm0.h ****  ******************************************************************************/
+  58:Drivers/CMSIS/Include/core_cm0.h **** /**
+  59:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup Cortex_M0
+  60:Drivers/CMSIS/Include/core_cm0.h ****   @{
+  61:Drivers/CMSIS/Include/core_cm0.h ****  */
+  62:Drivers/CMSIS/Include/core_cm0.h **** 
+  63:Drivers/CMSIS/Include/core_cm0.h **** #include "cmsis_version.h"
+  64:Drivers/CMSIS/Include/core_cm0.h ****  
+  65:Drivers/CMSIS/Include/core_cm0.h **** /*  CMSIS CM0 definitions */
+  66:Drivers/CMSIS/Include/core_cm0.h **** #define __CM0_CMSIS_VERSION_MAIN  (__CM_CMSIS_VERSION_MAIN)              /*!< \deprecated [31:16] C
+  67:Drivers/CMSIS/Include/core_cm0.h **** #define __CM0_CMSIS_VERSION_SUB   (__CM_CMSIS_VERSION_SUB)               /*!< \deprecated [15:0]  C
+  68:Drivers/CMSIS/Include/core_cm0.h **** #define __CM0_CMSIS_VERSION       ((__CM0_CMSIS_VERSION_MAIN << 16U) | \
+  69:Drivers/CMSIS/Include/core_cm0.h ****                                     __CM0_CMSIS_VERSION_SUB           )  /*!< \deprecated CMSIS HAL
+  70:Drivers/CMSIS/Include/core_cm0.h **** 
+  71:Drivers/CMSIS/Include/core_cm0.h **** #define __CORTEX_M                (0U)                                   /*!< Cortex-M Core */
+  72:Drivers/CMSIS/Include/core_cm0.h **** 
+  73:Drivers/CMSIS/Include/core_cm0.h **** /** __FPU_USED indicates whether an FPU is used or not.
+  74:Drivers/CMSIS/Include/core_cm0.h ****     This core does not support an FPU at all
+  75:Drivers/CMSIS/Include/core_cm0.h **** */
+  76:Drivers/CMSIS/Include/core_cm0.h **** #define __FPU_USED       0U
+  77:Drivers/CMSIS/Include/core_cm0.h **** 
+  78:Drivers/CMSIS/Include/core_cm0.h **** #if defined ( __CC_ARM )
+  79:Drivers/CMSIS/Include/core_cm0.h ****   #if defined __TARGET_FPU_VFP
+  80:Drivers/CMSIS/Include/core_cm0.h ****     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+  81:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+  82:Drivers/CMSIS/Include/core_cm0.h **** 
+  83:Drivers/CMSIS/Include/core_cm0.h **** #elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+  84:Drivers/CMSIS/Include/core_cm0.h ****   #if defined __ARM_PCS_VFP
+  85:Drivers/CMSIS/Include/core_cm0.h ****     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+  86:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+  87:Drivers/CMSIS/Include/core_cm0.h **** 
+  88:Drivers/CMSIS/Include/core_cm0.h **** #elif defined ( __GNUC__ )
+  89:Drivers/CMSIS/Include/core_cm0.h ****   #if defined (__VFP_FP__) && !defined(__SOFTFP__)
+  90:Drivers/CMSIS/Include/core_cm0.h ****     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+  91:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+  92:Drivers/CMSIS/Include/core_cm0.h **** 
+  93:Drivers/CMSIS/Include/core_cm0.h **** #elif defined ( __ICCARM__ )
+  94:Drivers/CMSIS/Include/core_cm0.h ****   #if defined __ARMVFP__
+  95:Drivers/CMSIS/Include/core_cm0.h ****     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+  96:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+  97:Drivers/CMSIS/Include/core_cm0.h **** 
+  98:Drivers/CMSIS/Include/core_cm0.h **** #elif defined ( __TI_ARM__ )
+  99:Drivers/CMSIS/Include/core_cm0.h ****   #if defined __TI_VFP_SUPPORT__
+ 100:Drivers/CMSIS/Include/core_cm0.h ****     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+ 101:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 102:Drivers/CMSIS/Include/core_cm0.h **** 
+ 103:Drivers/CMSIS/Include/core_cm0.h **** #elif defined ( __TASKING__ )
+ 104:Drivers/CMSIS/Include/core_cm0.h ****   #if defined __FPU_VFP__
+ 105:Drivers/CMSIS/Include/core_cm0.h ****     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 6
+
+
+ 106:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 107:Drivers/CMSIS/Include/core_cm0.h **** 
+ 108:Drivers/CMSIS/Include/core_cm0.h **** #elif defined ( __CSMC__ )
+ 109:Drivers/CMSIS/Include/core_cm0.h ****   #if ( __CSMC__ & 0x400U)
+ 110:Drivers/CMSIS/Include/core_cm0.h ****     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+ 111:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 112:Drivers/CMSIS/Include/core_cm0.h **** 
+ 113:Drivers/CMSIS/Include/core_cm0.h **** #endif
+ 114:Drivers/CMSIS/Include/core_cm0.h **** 
+ 115:Drivers/CMSIS/Include/core_cm0.h **** #include "cmsis_compiler.h"               /* CMSIS compiler specific defines */
+ 116:Drivers/CMSIS/Include/core_cm0.h **** 
+ 117:Drivers/CMSIS/Include/core_cm0.h **** 
+ 118:Drivers/CMSIS/Include/core_cm0.h **** #ifdef __cplusplus
+ 119:Drivers/CMSIS/Include/core_cm0.h **** }
+ 120:Drivers/CMSIS/Include/core_cm0.h **** #endif
+ 121:Drivers/CMSIS/Include/core_cm0.h **** 
+ 122:Drivers/CMSIS/Include/core_cm0.h **** #endif /* __CORE_CM0_H_GENERIC */
+ 123:Drivers/CMSIS/Include/core_cm0.h **** 
+ 124:Drivers/CMSIS/Include/core_cm0.h **** #ifndef __CMSIS_GENERIC
+ 125:Drivers/CMSIS/Include/core_cm0.h **** 
+ 126:Drivers/CMSIS/Include/core_cm0.h **** #ifndef __CORE_CM0_H_DEPENDANT
+ 127:Drivers/CMSIS/Include/core_cm0.h **** #define __CORE_CM0_H_DEPENDANT
+ 128:Drivers/CMSIS/Include/core_cm0.h **** 
+ 129:Drivers/CMSIS/Include/core_cm0.h **** #ifdef __cplusplus
+ 130:Drivers/CMSIS/Include/core_cm0.h ****  extern "C" {
+ 131:Drivers/CMSIS/Include/core_cm0.h **** #endif
+ 132:Drivers/CMSIS/Include/core_cm0.h **** 
+ 133:Drivers/CMSIS/Include/core_cm0.h **** /* check device defines and use defaults */
+ 134:Drivers/CMSIS/Include/core_cm0.h **** #if defined __CHECK_DEVICE_DEFINES
+ 135:Drivers/CMSIS/Include/core_cm0.h ****   #ifndef __CM0_REV
+ 136:Drivers/CMSIS/Include/core_cm0.h ****     #define __CM0_REV               0x0000U
+ 137:Drivers/CMSIS/Include/core_cm0.h ****     #warning "__CM0_REV not defined in device header file; using default!"
+ 138:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 139:Drivers/CMSIS/Include/core_cm0.h **** 
+ 140:Drivers/CMSIS/Include/core_cm0.h ****   #ifndef __NVIC_PRIO_BITS
+ 141:Drivers/CMSIS/Include/core_cm0.h ****     #define __NVIC_PRIO_BITS          2U
+ 142:Drivers/CMSIS/Include/core_cm0.h ****     #warning "__NVIC_PRIO_BITS not defined in device header file; using default!"
+ 143:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 144:Drivers/CMSIS/Include/core_cm0.h **** 
+ 145:Drivers/CMSIS/Include/core_cm0.h ****   #ifndef __Vendor_SysTickConfig
+ 146:Drivers/CMSIS/Include/core_cm0.h ****     #define __Vendor_SysTickConfig    0U
+ 147:Drivers/CMSIS/Include/core_cm0.h ****     #warning "__Vendor_SysTickConfig not defined in device header file; using default!"
+ 148:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 149:Drivers/CMSIS/Include/core_cm0.h **** #endif
+ 150:Drivers/CMSIS/Include/core_cm0.h **** 
+ 151:Drivers/CMSIS/Include/core_cm0.h **** /* IO definitions (access restrictions to peripheral registers) */
+ 152:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 153:Drivers/CMSIS/Include/core_cm0.h ****     \defgroup CMSIS_glob_defs CMSIS Global Defines
+ 154:Drivers/CMSIS/Include/core_cm0.h **** 
+ 155:Drivers/CMSIS/Include/core_cm0.h ****     <strong>IO Type Qualifiers</strong> are used
+ 156:Drivers/CMSIS/Include/core_cm0.h ****     \li to specify the access to peripheral variables.
+ 157:Drivers/CMSIS/Include/core_cm0.h ****     \li for automatic generation of peripheral register debug information.
+ 158:Drivers/CMSIS/Include/core_cm0.h **** */
+ 159:Drivers/CMSIS/Include/core_cm0.h **** #ifdef __cplusplus
+ 160:Drivers/CMSIS/Include/core_cm0.h ****   #define   __I     volatile             /*!< Defines 'read only' permissions */
+ 161:Drivers/CMSIS/Include/core_cm0.h **** #else
+ 162:Drivers/CMSIS/Include/core_cm0.h ****   #define   __I     volatile const       /*!< Defines 'read only' permissions */
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 7
+
+
+ 163:Drivers/CMSIS/Include/core_cm0.h **** #endif
+ 164:Drivers/CMSIS/Include/core_cm0.h **** #define     __O     volatile             /*!< Defines 'write only' permissions */
+ 165:Drivers/CMSIS/Include/core_cm0.h **** #define     __IO    volatile             /*!< Defines 'read / write' permissions */
+ 166:Drivers/CMSIS/Include/core_cm0.h **** 
+ 167:Drivers/CMSIS/Include/core_cm0.h **** /* following defines should be used for structure members */
+ 168:Drivers/CMSIS/Include/core_cm0.h **** #define     __IM     volatile const      /*! Defines 'read only' structure member permissions */
+ 169:Drivers/CMSIS/Include/core_cm0.h **** #define     __OM     volatile            /*! Defines 'write only' structure member permissions */
+ 170:Drivers/CMSIS/Include/core_cm0.h **** #define     __IOM    volatile            /*! Defines 'read / write' structure member permissions */
+ 171:Drivers/CMSIS/Include/core_cm0.h **** 
+ 172:Drivers/CMSIS/Include/core_cm0.h **** /*@} end of group Cortex_M0 */
+ 173:Drivers/CMSIS/Include/core_cm0.h **** 
+ 174:Drivers/CMSIS/Include/core_cm0.h **** 
+ 175:Drivers/CMSIS/Include/core_cm0.h **** 
+ 176:Drivers/CMSIS/Include/core_cm0.h **** /*******************************************************************************
+ 177:Drivers/CMSIS/Include/core_cm0.h ****  *                 Register Abstraction
+ 178:Drivers/CMSIS/Include/core_cm0.h ****   Core Register contain:
+ 179:Drivers/CMSIS/Include/core_cm0.h ****   - Core Register
+ 180:Drivers/CMSIS/Include/core_cm0.h ****   - Core NVIC Register
+ 181:Drivers/CMSIS/Include/core_cm0.h ****   - Core SCB Register
+ 182:Drivers/CMSIS/Include/core_cm0.h ****   - Core SysTick Register
+ 183:Drivers/CMSIS/Include/core_cm0.h ****  ******************************************************************************/
+ 184:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 185:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup CMSIS_core_register Defines and Type Definitions
+ 186:Drivers/CMSIS/Include/core_cm0.h ****   \brief Type definitions and defines for Cortex-M processor based devices.
+ 187:Drivers/CMSIS/Include/core_cm0.h **** */
+ 188:Drivers/CMSIS/Include/core_cm0.h **** 
+ 189:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 190:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup    CMSIS_core_register
+ 191:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup   CMSIS_CORE  Status and Control Registers
+ 192:Drivers/CMSIS/Include/core_cm0.h ****   \brief      Core Register type definitions.
+ 193:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ 194:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 195:Drivers/CMSIS/Include/core_cm0.h **** 
+ 196:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 197:Drivers/CMSIS/Include/core_cm0.h ****   \brief  Union type to access the Application Program Status Register (APSR).
+ 198:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 199:Drivers/CMSIS/Include/core_cm0.h **** typedef union
+ 200:Drivers/CMSIS/Include/core_cm0.h **** {
+ 201:Drivers/CMSIS/Include/core_cm0.h ****   struct
+ 202:Drivers/CMSIS/Include/core_cm0.h ****   {
+ 203:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t _reserved0:28;              /*!< bit:  0..27  Reserved */
+ 204:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t V:1;                        /*!< bit:     28  Overflow condition code flag */
+ 205:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t C:1;                        /*!< bit:     29  Carry condition code flag */
+ 206:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t Z:1;                        /*!< bit:     30  Zero condition code flag */
+ 207:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t N:1;                        /*!< bit:     31  Negative condition code flag */
+ 208:Drivers/CMSIS/Include/core_cm0.h ****   } b;                                   /*!< Structure used for bit  access */
+ 209:Drivers/CMSIS/Include/core_cm0.h ****   uint32_t w;                            /*!< Type      used for word access */
+ 210:Drivers/CMSIS/Include/core_cm0.h **** } APSR_Type;
+ 211:Drivers/CMSIS/Include/core_cm0.h **** 
+ 212:Drivers/CMSIS/Include/core_cm0.h **** /* APSR Register Definitions */
+ 213:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_N_Pos                         31U                                            /*!< APSR
+ 214:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_N_Msk                         (1UL << APSR_N_Pos)                            /*!< APSR
+ 215:Drivers/CMSIS/Include/core_cm0.h **** 
+ 216:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_Z_Pos                         30U                                            /*!< APSR
+ 217:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_Z_Msk                         (1UL << APSR_Z_Pos)                            /*!< APSR
+ 218:Drivers/CMSIS/Include/core_cm0.h **** 
+ 219:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_C_Pos                         29U                                            /*!< APSR
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 8
+
+
+ 220:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_C_Msk                         (1UL << APSR_C_Pos)                            /*!< APSR
+ 221:Drivers/CMSIS/Include/core_cm0.h **** 
+ 222:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_V_Pos                         28U                                            /*!< APSR
+ 223:Drivers/CMSIS/Include/core_cm0.h **** #define APSR_V_Msk                         (1UL << APSR_V_Pos)                            /*!< APSR
+ 224:Drivers/CMSIS/Include/core_cm0.h **** 
+ 225:Drivers/CMSIS/Include/core_cm0.h **** 
+ 226:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 227:Drivers/CMSIS/Include/core_cm0.h ****   \brief  Union type to access the Interrupt Program Status Register (IPSR).
+ 228:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 229:Drivers/CMSIS/Include/core_cm0.h **** typedef union
+ 230:Drivers/CMSIS/Include/core_cm0.h **** {
+ 231:Drivers/CMSIS/Include/core_cm0.h ****   struct
+ 232:Drivers/CMSIS/Include/core_cm0.h ****   {
+ 233:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t ISR:9;                      /*!< bit:  0.. 8  Exception number */
+ 234:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t _reserved0:23;              /*!< bit:  9..31  Reserved */
+ 235:Drivers/CMSIS/Include/core_cm0.h ****   } b;                                   /*!< Structure used for bit  access */
+ 236:Drivers/CMSIS/Include/core_cm0.h ****   uint32_t w;                            /*!< Type      used for word access */
+ 237:Drivers/CMSIS/Include/core_cm0.h **** } IPSR_Type;
+ 238:Drivers/CMSIS/Include/core_cm0.h **** 
+ 239:Drivers/CMSIS/Include/core_cm0.h **** /* IPSR Register Definitions */
+ 240:Drivers/CMSIS/Include/core_cm0.h **** #define IPSR_ISR_Pos                        0U                                            /*!< IPSR
+ 241:Drivers/CMSIS/Include/core_cm0.h **** #define IPSR_ISR_Msk                       (0x1FFUL /*<< IPSR_ISR_Pos*/)                  /*!< IPSR
+ 242:Drivers/CMSIS/Include/core_cm0.h **** 
+ 243:Drivers/CMSIS/Include/core_cm0.h **** 
+ 244:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 245:Drivers/CMSIS/Include/core_cm0.h ****   \brief  Union type to access the Special-Purpose Program Status Registers (xPSR).
+ 246:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 247:Drivers/CMSIS/Include/core_cm0.h **** typedef union
+ 248:Drivers/CMSIS/Include/core_cm0.h **** {
+ 249:Drivers/CMSIS/Include/core_cm0.h ****   struct
+ 250:Drivers/CMSIS/Include/core_cm0.h ****   {
+ 251:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t ISR:9;                      /*!< bit:  0.. 8  Exception number */
+ 252:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t _reserved0:15;              /*!< bit:  9..23  Reserved */
+ 253:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t T:1;                        /*!< bit:     24  Thumb bit        (read 0) */
+ 254:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t _reserved1:3;               /*!< bit: 25..27  Reserved */
+ 255:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t V:1;                        /*!< bit:     28  Overflow condition code flag */
+ 256:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t C:1;                        /*!< bit:     29  Carry condition code flag */
+ 257:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t Z:1;                        /*!< bit:     30  Zero condition code flag */
+ 258:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t N:1;                        /*!< bit:     31  Negative condition code flag */
+ 259:Drivers/CMSIS/Include/core_cm0.h ****   } b;                                   /*!< Structure used for bit  access */
+ 260:Drivers/CMSIS/Include/core_cm0.h ****   uint32_t w;                            /*!< Type      used for word access */
+ 261:Drivers/CMSIS/Include/core_cm0.h **** } xPSR_Type;
+ 262:Drivers/CMSIS/Include/core_cm0.h **** 
+ 263:Drivers/CMSIS/Include/core_cm0.h **** /* xPSR Register Definitions */
+ 264:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_N_Pos                         31U                                            /*!< xPSR
+ 265:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_N_Msk                         (1UL << xPSR_N_Pos)                            /*!< xPSR
+ 266:Drivers/CMSIS/Include/core_cm0.h **** 
+ 267:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_Z_Pos                         30U                                            /*!< xPSR
+ 268:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_Z_Msk                         (1UL << xPSR_Z_Pos)                            /*!< xPSR
+ 269:Drivers/CMSIS/Include/core_cm0.h **** 
+ 270:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_C_Pos                         29U                                            /*!< xPSR
+ 271:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_C_Msk                         (1UL << xPSR_C_Pos)                            /*!< xPSR
+ 272:Drivers/CMSIS/Include/core_cm0.h **** 
+ 273:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_V_Pos                         28U                                            /*!< xPSR
+ 274:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_V_Msk                         (1UL << xPSR_V_Pos)                            /*!< xPSR
+ 275:Drivers/CMSIS/Include/core_cm0.h **** 
+ 276:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_T_Pos                         24U                                            /*!< xPSR
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 9
+
+
+ 277:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_T_Msk                         (1UL << xPSR_T_Pos)                            /*!< xPSR
+ 278:Drivers/CMSIS/Include/core_cm0.h **** 
+ 279:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_ISR_Pos                        0U                                            /*!< xPSR
+ 280:Drivers/CMSIS/Include/core_cm0.h **** #define xPSR_ISR_Msk                       (0x1FFUL /*<< xPSR_ISR_Pos*/)                  /*!< xPSR
+ 281:Drivers/CMSIS/Include/core_cm0.h **** 
+ 282:Drivers/CMSIS/Include/core_cm0.h **** 
+ 283:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 284:Drivers/CMSIS/Include/core_cm0.h ****   \brief  Union type to access the Control Registers (CONTROL).
+ 285:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 286:Drivers/CMSIS/Include/core_cm0.h **** typedef union
+ 287:Drivers/CMSIS/Include/core_cm0.h **** {
+ 288:Drivers/CMSIS/Include/core_cm0.h ****   struct
+ 289:Drivers/CMSIS/Include/core_cm0.h ****   {
+ 290:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t _reserved0:1;               /*!< bit:      0  Reserved */
+ 291:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t SPSEL:1;                    /*!< bit:      1  Stack to be used */
+ 292:Drivers/CMSIS/Include/core_cm0.h ****     uint32_t _reserved1:30;              /*!< bit:  2..31  Reserved */
+ 293:Drivers/CMSIS/Include/core_cm0.h ****   } b;                                   /*!< Structure used for bit  access */
+ 294:Drivers/CMSIS/Include/core_cm0.h ****   uint32_t w;                            /*!< Type      used for word access */
+ 295:Drivers/CMSIS/Include/core_cm0.h **** } CONTROL_Type;
+ 296:Drivers/CMSIS/Include/core_cm0.h **** 
+ 297:Drivers/CMSIS/Include/core_cm0.h **** /* CONTROL Register Definitions */
+ 298:Drivers/CMSIS/Include/core_cm0.h **** #define CONTROL_SPSEL_Pos                   1U                                            /*!< CONT
+ 299:Drivers/CMSIS/Include/core_cm0.h **** #define CONTROL_SPSEL_Msk                  (1UL << CONTROL_SPSEL_Pos)                     /*!< CONT
+ 300:Drivers/CMSIS/Include/core_cm0.h **** 
+ 301:Drivers/CMSIS/Include/core_cm0.h **** /*@} end of group CMSIS_CORE */
+ 302:Drivers/CMSIS/Include/core_cm0.h **** 
+ 303:Drivers/CMSIS/Include/core_cm0.h **** 
+ 304:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 305:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup    CMSIS_core_register
+ 306:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup   CMSIS_NVIC  Nested Vectored Interrupt Controller (NVIC)
+ 307:Drivers/CMSIS/Include/core_cm0.h ****   \brief      Type definitions for the NVIC Registers
+ 308:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ 309:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 310:Drivers/CMSIS/Include/core_cm0.h **** 
+ 311:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 312:Drivers/CMSIS/Include/core_cm0.h ****   \brief  Structure type to access the Nested Vectored Interrupt Controller (NVIC).
+ 313:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 314:Drivers/CMSIS/Include/core_cm0.h **** typedef struct
+ 315:Drivers/CMSIS/Include/core_cm0.h **** {
+ 316:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t ISER[1U];               /*!< Offset: 0x000 (R/W)  Interrupt Set Enable Register */
+ 317:Drivers/CMSIS/Include/core_cm0.h ****         uint32_t RESERVED0[31U];
+ 318:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t ICER[1U];               /*!< Offset: 0x080 (R/W)  Interrupt Clear Enable Register 
+ 319:Drivers/CMSIS/Include/core_cm0.h ****         uint32_t RSERVED1[31U];
+ 320:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t ISPR[1U];               /*!< Offset: 0x100 (R/W)  Interrupt Set Pending Register *
+ 321:Drivers/CMSIS/Include/core_cm0.h ****         uint32_t RESERVED2[31U];
+ 322:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t ICPR[1U];               /*!< Offset: 0x180 (R/W)  Interrupt Clear Pending Register
+ 323:Drivers/CMSIS/Include/core_cm0.h ****         uint32_t RESERVED3[31U];
+ 324:Drivers/CMSIS/Include/core_cm0.h ****         uint32_t RESERVED4[64U];
+ 325:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t IP[8U];                 /*!< Offset: 0x300 (R/W)  Interrupt Priority Register */
+ 326:Drivers/CMSIS/Include/core_cm0.h **** }  NVIC_Type;
+ 327:Drivers/CMSIS/Include/core_cm0.h **** 
+ 328:Drivers/CMSIS/Include/core_cm0.h **** /*@} end of group CMSIS_NVIC */
+ 329:Drivers/CMSIS/Include/core_cm0.h **** 
+ 330:Drivers/CMSIS/Include/core_cm0.h **** 
+ 331:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 332:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup  CMSIS_core_register
+ 333:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup CMSIS_SCB     System Control Block (SCB)
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 10
+
+
+ 334:Drivers/CMSIS/Include/core_cm0.h ****   \brief    Type definitions for the System Control Block Registers
+ 335:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ 336:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 337:Drivers/CMSIS/Include/core_cm0.h **** 
+ 338:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 339:Drivers/CMSIS/Include/core_cm0.h ****   \brief  Structure type to access the System Control Block (SCB).
+ 340:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 341:Drivers/CMSIS/Include/core_cm0.h **** typedef struct
+ 342:Drivers/CMSIS/Include/core_cm0.h **** {
+ 343:Drivers/CMSIS/Include/core_cm0.h ****   __IM  uint32_t CPUID;                  /*!< Offset: 0x000 (R/ )  CPUID Base Register */
+ 344:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t ICSR;                   /*!< Offset: 0x004 (R/W)  Interrupt Control and State Regi
+ 345:Drivers/CMSIS/Include/core_cm0.h ****         uint32_t RESERVED0;
+ 346:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t AIRCR;                  /*!< Offset: 0x00C (R/W)  Application Interrupt and Reset 
+ 347:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t SCR;                    /*!< Offset: 0x010 (R/W)  System Control Register */
+ 348:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t CCR;                    /*!< Offset: 0x014 (R/W)  Configuration Control Register *
+ 349:Drivers/CMSIS/Include/core_cm0.h ****         uint32_t RESERVED1;
+ 350:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t SHP[2U];                /*!< Offset: 0x01C (R/W)  System Handlers Priority Registe
+ 351:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t SHCSR;                  /*!< Offset: 0x024 (R/W)  System Handler Control and State
+ 352:Drivers/CMSIS/Include/core_cm0.h **** } SCB_Type;
+ 353:Drivers/CMSIS/Include/core_cm0.h **** 
+ 354:Drivers/CMSIS/Include/core_cm0.h **** /* SCB CPUID Register Definitions */
+ 355:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_IMPLEMENTER_Pos          24U                                            /*!< SCB 
+ 356:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_IMPLEMENTER_Msk          (0xFFUL << SCB_CPUID_IMPLEMENTER_Pos)          /*!< SCB 
+ 357:Drivers/CMSIS/Include/core_cm0.h **** 
+ 358:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_VARIANT_Pos              20U                                            /*!< SCB 
+ 359:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_VARIANT_Msk              (0xFUL << SCB_CPUID_VARIANT_Pos)               /*!< SCB 
+ 360:Drivers/CMSIS/Include/core_cm0.h **** 
+ 361:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_ARCHITECTURE_Pos         16U                                            /*!< SCB 
+ 362:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_ARCHITECTURE_Msk         (0xFUL << SCB_CPUID_ARCHITECTURE_Pos)          /*!< SCB 
+ 363:Drivers/CMSIS/Include/core_cm0.h **** 
+ 364:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_PARTNO_Pos                4U                                            /*!< SCB 
+ 365:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_PARTNO_Msk               (0xFFFUL << SCB_CPUID_PARTNO_Pos)              /*!< SCB 
+ 366:Drivers/CMSIS/Include/core_cm0.h **** 
+ 367:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_REVISION_Pos              0U                                            /*!< SCB 
+ 368:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CPUID_REVISION_Msk             (0xFUL /*<< SCB_CPUID_REVISION_Pos*/)          /*!< SCB 
+ 369:Drivers/CMSIS/Include/core_cm0.h **** 
+ 370:Drivers/CMSIS/Include/core_cm0.h **** /* SCB Interrupt Control State Register Definitions */
+ 371:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_NMIPENDSET_Pos            31U                                            /*!< SCB 
+ 372:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_NMIPENDSET_Msk            (1UL << SCB_ICSR_NMIPENDSET_Pos)               /*!< SCB 
+ 373:Drivers/CMSIS/Include/core_cm0.h **** 
+ 374:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSVSET_Pos             28U                                            /*!< SCB 
+ 375:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSVSET_Msk             (1UL << SCB_ICSR_PENDSVSET_Pos)                /*!< SCB 
+ 376:Drivers/CMSIS/Include/core_cm0.h **** 
+ 377:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSVCLR_Pos             27U                                            /*!< SCB 
+ 378:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSVCLR_Msk             (1UL << SCB_ICSR_PENDSVCLR_Pos)                /*!< SCB 
+ 379:Drivers/CMSIS/Include/core_cm0.h **** 
+ 380:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSTSET_Pos             26U                                            /*!< SCB 
+ 381:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSTSET_Msk             (1UL << SCB_ICSR_PENDSTSET_Pos)                /*!< SCB 
+ 382:Drivers/CMSIS/Include/core_cm0.h **** 
+ 383:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSTCLR_Pos             25U                                            /*!< SCB 
+ 384:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_PENDSTCLR_Msk             (1UL << SCB_ICSR_PENDSTCLR_Pos)                /*!< SCB 
+ 385:Drivers/CMSIS/Include/core_cm0.h **** 
+ 386:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_ISRPREEMPT_Pos            23U                                            /*!< SCB 
+ 387:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_ISRPREEMPT_Msk            (1UL << SCB_ICSR_ISRPREEMPT_Pos)               /*!< SCB 
+ 388:Drivers/CMSIS/Include/core_cm0.h **** 
+ 389:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_ISRPENDING_Pos            22U                                            /*!< SCB 
+ 390:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_ISRPENDING_Msk            (1UL << SCB_ICSR_ISRPENDING_Pos)               /*!< SCB 
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 11
+
+
+ 391:Drivers/CMSIS/Include/core_cm0.h **** 
+ 392:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_VECTPENDING_Pos           12U                                            /*!< SCB 
+ 393:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_VECTPENDING_Msk           (0x1FFUL << SCB_ICSR_VECTPENDING_Pos)          /*!< SCB 
+ 394:Drivers/CMSIS/Include/core_cm0.h **** 
+ 395:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_VECTACTIVE_Pos             0U                                            /*!< SCB 
+ 396:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_ICSR_VECTACTIVE_Msk            (0x1FFUL /*<< SCB_ICSR_VECTACTIVE_Pos*/)       /*!< SCB 
+ 397:Drivers/CMSIS/Include/core_cm0.h **** 
+ 398:Drivers/CMSIS/Include/core_cm0.h **** /* SCB Application Interrupt and Reset Control Register Definitions */
+ 399:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_VECTKEY_Pos              16U                                            /*!< SCB 
+ 400:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_VECTKEY_Msk              (0xFFFFUL << SCB_AIRCR_VECTKEY_Pos)            /*!< SCB 
+ 401:Drivers/CMSIS/Include/core_cm0.h **** 
+ 402:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_VECTKEYSTAT_Pos          16U                                            /*!< SCB 
+ 403:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_VECTKEYSTAT_Msk          (0xFFFFUL << SCB_AIRCR_VECTKEYSTAT_Pos)        /*!< SCB 
+ 404:Drivers/CMSIS/Include/core_cm0.h **** 
+ 405:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_ENDIANESS_Pos            15U                                            /*!< SCB 
+ 406:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_ENDIANESS_Msk            (1UL << SCB_AIRCR_ENDIANESS_Pos)               /*!< SCB 
+ 407:Drivers/CMSIS/Include/core_cm0.h **** 
+ 408:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_SYSRESETREQ_Pos           2U                                            /*!< SCB 
+ 409:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_SYSRESETREQ_Msk          (1UL << SCB_AIRCR_SYSRESETREQ_Pos)             /*!< SCB 
+ 410:Drivers/CMSIS/Include/core_cm0.h **** 
+ 411:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_VECTCLRACTIVE_Pos         1U                                            /*!< SCB 
+ 412:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_AIRCR_VECTCLRACTIVE_Msk        (1UL << SCB_AIRCR_VECTCLRACTIVE_Pos)           /*!< SCB 
+ 413:Drivers/CMSIS/Include/core_cm0.h **** 
+ 414:Drivers/CMSIS/Include/core_cm0.h **** /* SCB System Control Register Definitions */
+ 415:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SCR_SEVONPEND_Pos               4U                                            /*!< SCB 
+ 416:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SCR_SEVONPEND_Msk              (1UL << SCB_SCR_SEVONPEND_Pos)                 /*!< SCB 
+ 417:Drivers/CMSIS/Include/core_cm0.h **** 
+ 418:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SCR_SLEEPDEEP_Pos               2U                                            /*!< SCB 
+ 419:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SCR_SLEEPDEEP_Msk              (1UL << SCB_SCR_SLEEPDEEP_Pos)                 /*!< SCB 
+ 420:Drivers/CMSIS/Include/core_cm0.h **** 
+ 421:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SCR_SLEEPONEXIT_Pos             1U                                            /*!< SCB 
+ 422:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SCR_SLEEPONEXIT_Msk            (1UL << SCB_SCR_SLEEPONEXIT_Pos)               /*!< SCB 
+ 423:Drivers/CMSIS/Include/core_cm0.h **** 
+ 424:Drivers/CMSIS/Include/core_cm0.h **** /* SCB Configuration Control Register Definitions */
+ 425:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CCR_STKALIGN_Pos                9U                                            /*!< SCB 
+ 426:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CCR_STKALIGN_Msk               (1UL << SCB_CCR_STKALIGN_Pos)                  /*!< SCB 
+ 427:Drivers/CMSIS/Include/core_cm0.h **** 
+ 428:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CCR_UNALIGN_TRP_Pos             3U                                            /*!< SCB 
+ 429:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_CCR_UNALIGN_TRP_Msk            (1UL << SCB_CCR_UNALIGN_TRP_Pos)               /*!< SCB 
+ 430:Drivers/CMSIS/Include/core_cm0.h **** 
+ 431:Drivers/CMSIS/Include/core_cm0.h **** /* SCB System Handler Control and State Register Definitions */
+ 432:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SHCSR_SVCALLPENDED_Pos         15U                                            /*!< SCB 
+ 433:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_SHCSR_SVCALLPENDED_Msk         (1UL << SCB_SHCSR_SVCALLPENDED_Pos)            /*!< SCB 
+ 434:Drivers/CMSIS/Include/core_cm0.h **** 
+ 435:Drivers/CMSIS/Include/core_cm0.h **** /*@} end of group CMSIS_SCB */
+ 436:Drivers/CMSIS/Include/core_cm0.h **** 
+ 437:Drivers/CMSIS/Include/core_cm0.h **** 
+ 438:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 439:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup  CMSIS_core_register
+ 440:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup CMSIS_SysTick     System Tick Timer (SysTick)
+ 441:Drivers/CMSIS/Include/core_cm0.h ****   \brief    Type definitions for the System Timer Registers.
+ 442:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ 443:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 444:Drivers/CMSIS/Include/core_cm0.h **** 
+ 445:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 446:Drivers/CMSIS/Include/core_cm0.h ****   \brief  Structure type to access the System Timer (SysTick).
+ 447:Drivers/CMSIS/Include/core_cm0.h ****  */
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 12
+
+
+ 448:Drivers/CMSIS/Include/core_cm0.h **** typedef struct
+ 449:Drivers/CMSIS/Include/core_cm0.h **** {
+ 450:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t CTRL;                   /*!< Offset: 0x000 (R/W)  SysTick Control and Status Regis
+ 451:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t LOAD;                   /*!< Offset: 0x004 (R/W)  SysTick Reload Value Register */
+ 452:Drivers/CMSIS/Include/core_cm0.h ****   __IOM uint32_t VAL;                    /*!< Offset: 0x008 (R/W)  SysTick Current Value Register *
+ 453:Drivers/CMSIS/Include/core_cm0.h ****   __IM  uint32_t CALIB;                  /*!< Offset: 0x00C (R/ )  SysTick Calibration Register */
+ 454:Drivers/CMSIS/Include/core_cm0.h **** } SysTick_Type;
+ 455:Drivers/CMSIS/Include/core_cm0.h **** 
+ 456:Drivers/CMSIS/Include/core_cm0.h **** /* SysTick Control / Status Register Definitions */
+ 457:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_COUNTFLAG_Pos         16U                                            /*!< SysT
+ 458:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_COUNTFLAG_Msk         (1UL << SysTick_CTRL_COUNTFLAG_Pos)            /*!< SysT
+ 459:Drivers/CMSIS/Include/core_cm0.h **** 
+ 460:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_CLKSOURCE_Pos          2U                                            /*!< SysT
+ 461:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_CLKSOURCE_Msk         (1UL << SysTick_CTRL_CLKSOURCE_Pos)            /*!< SysT
+ 462:Drivers/CMSIS/Include/core_cm0.h **** 
+ 463:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_TICKINT_Pos            1U                                            /*!< SysT
+ 464:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_TICKINT_Msk           (1UL << SysTick_CTRL_TICKINT_Pos)              /*!< SysT
+ 465:Drivers/CMSIS/Include/core_cm0.h **** 
+ 466:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_ENABLE_Pos             0U                                            /*!< SysT
+ 467:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CTRL_ENABLE_Msk            (1UL /*<< SysTick_CTRL_ENABLE_Pos*/)           /*!< SysT
+ 468:Drivers/CMSIS/Include/core_cm0.h **** 
+ 469:Drivers/CMSIS/Include/core_cm0.h **** /* SysTick Reload Register Definitions */
+ 470:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_LOAD_RELOAD_Pos             0U                                            /*!< SysT
+ 471:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_LOAD_RELOAD_Msk            (0xFFFFFFUL /*<< SysTick_LOAD_RELOAD_Pos*/)    /*!< SysT
+ 472:Drivers/CMSIS/Include/core_cm0.h **** 
+ 473:Drivers/CMSIS/Include/core_cm0.h **** /* SysTick Current Register Definitions */
+ 474:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_VAL_CURRENT_Pos             0U                                            /*!< SysT
+ 475:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_VAL_CURRENT_Msk            (0xFFFFFFUL /*<< SysTick_VAL_CURRENT_Pos*/)    /*!< SysT
+ 476:Drivers/CMSIS/Include/core_cm0.h **** 
+ 477:Drivers/CMSIS/Include/core_cm0.h **** /* SysTick Calibration Register Definitions */
+ 478:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CALIB_NOREF_Pos            31U                                            /*!< SysT
+ 479:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CALIB_NOREF_Msk            (1UL << SysTick_CALIB_NOREF_Pos)               /*!< SysT
+ 480:Drivers/CMSIS/Include/core_cm0.h **** 
+ 481:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CALIB_SKEW_Pos             30U                                            /*!< SysT
+ 482:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CALIB_SKEW_Msk             (1UL << SysTick_CALIB_SKEW_Pos)                /*!< SysT
+ 483:Drivers/CMSIS/Include/core_cm0.h **** 
+ 484:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CALIB_TENMS_Pos             0U                                            /*!< SysT
+ 485:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_CALIB_TENMS_Msk            (0xFFFFFFUL /*<< SysTick_CALIB_TENMS_Pos*/)    /*!< SysT
+ 486:Drivers/CMSIS/Include/core_cm0.h **** 
+ 487:Drivers/CMSIS/Include/core_cm0.h **** /*@} end of group CMSIS_SysTick */
+ 488:Drivers/CMSIS/Include/core_cm0.h **** 
+ 489:Drivers/CMSIS/Include/core_cm0.h **** 
+ 490:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 491:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup  CMSIS_core_register
+ 492:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup CMSIS_CoreDebug       Core Debug Registers (CoreDebug)
+ 493:Drivers/CMSIS/Include/core_cm0.h ****   \brief    Cortex-M0 Core Debug Registers (DCB registers, SHCSR, and DFSR) are only accessible ove
+ 494:Drivers/CMSIS/Include/core_cm0.h ****             Therefore they are not covered by the Cortex-M0 header file.
+ 495:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ 496:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 497:Drivers/CMSIS/Include/core_cm0.h **** /*@} end of group CMSIS_CoreDebug */
+ 498:Drivers/CMSIS/Include/core_cm0.h **** 
+ 499:Drivers/CMSIS/Include/core_cm0.h **** 
+ 500:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 501:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup    CMSIS_core_register
+ 502:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup   CMSIS_core_bitfield     Core register bit field macros
+ 503:Drivers/CMSIS/Include/core_cm0.h ****   \brief      Macros for use with bit field definitions (xxx_Pos, xxx_Msk).
+ 504:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 13
+
+
+ 505:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 506:Drivers/CMSIS/Include/core_cm0.h **** 
+ 507:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 508:Drivers/CMSIS/Include/core_cm0.h ****   \brief   Mask and shift a bit field value for use in a register bit range.
+ 509:Drivers/CMSIS/Include/core_cm0.h ****   \param[in] field  Name of the register bit field.
+ 510:Drivers/CMSIS/Include/core_cm0.h ****   \param[in] value  Value of the bit field. This parameter is interpreted as an uint32_t type.
+ 511:Drivers/CMSIS/Include/core_cm0.h ****   \return           Masked and shifted value.
+ 512:Drivers/CMSIS/Include/core_cm0.h **** */
+ 513:Drivers/CMSIS/Include/core_cm0.h **** #define _VAL2FLD(field, value)    (((uint32_t)(value) << field ## _Pos) & field ## _Msk)
+ 514:Drivers/CMSIS/Include/core_cm0.h **** 
+ 515:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 516:Drivers/CMSIS/Include/core_cm0.h ****   \brief     Mask and shift a register value to extract a bit filed value.
+ 517:Drivers/CMSIS/Include/core_cm0.h ****   \param[in] field  Name of the register bit field.
+ 518:Drivers/CMSIS/Include/core_cm0.h ****   \param[in] value  Value of register. This parameter is interpreted as an uint32_t type.
+ 519:Drivers/CMSIS/Include/core_cm0.h ****   \return           Masked and shifted bit field value.
+ 520:Drivers/CMSIS/Include/core_cm0.h **** */
+ 521:Drivers/CMSIS/Include/core_cm0.h **** #define _FLD2VAL(field, value)    (((uint32_t)(value) & field ## _Msk) >> field ## _Pos)
+ 522:Drivers/CMSIS/Include/core_cm0.h **** 
+ 523:Drivers/CMSIS/Include/core_cm0.h **** /*@} end of group CMSIS_core_bitfield */
+ 524:Drivers/CMSIS/Include/core_cm0.h **** 
+ 525:Drivers/CMSIS/Include/core_cm0.h **** 
+ 526:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 527:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup    CMSIS_core_register
+ 528:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup   CMSIS_core_base     Core Definitions
+ 529:Drivers/CMSIS/Include/core_cm0.h ****   \brief      Definitions for base addresses, unions, and structures.
+ 530:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ 531:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 532:Drivers/CMSIS/Include/core_cm0.h **** 
+ 533:Drivers/CMSIS/Include/core_cm0.h **** /* Memory mapping of Core Hardware */
+ 534:Drivers/CMSIS/Include/core_cm0.h **** #define SCS_BASE            (0xE000E000UL)                            /*!< System Control Space Bas
+ 535:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick_BASE        (SCS_BASE +  0x0010UL)                    /*!< SysTick Base Address */
+ 536:Drivers/CMSIS/Include/core_cm0.h **** #define NVIC_BASE           (SCS_BASE +  0x0100UL)                    /*!< NVIC Base Address */
+ 537:Drivers/CMSIS/Include/core_cm0.h **** #define SCB_BASE            (SCS_BASE +  0x0D00UL)                    /*!< System Control Block Bas
+ 538:Drivers/CMSIS/Include/core_cm0.h **** 
+ 539:Drivers/CMSIS/Include/core_cm0.h **** #define SCB                 ((SCB_Type       *)     SCB_BASE      )   /*!< SCB configuration struct
+ 540:Drivers/CMSIS/Include/core_cm0.h **** #define SysTick             ((SysTick_Type   *)     SysTick_BASE  )   /*!< SysTick configuration st
+ 541:Drivers/CMSIS/Include/core_cm0.h **** #define NVIC                ((NVIC_Type      *)     NVIC_BASE     )   /*!< NVIC configuration struc
+ 542:Drivers/CMSIS/Include/core_cm0.h **** 
+ 543:Drivers/CMSIS/Include/core_cm0.h **** 
+ 544:Drivers/CMSIS/Include/core_cm0.h **** /*@} */
+ 545:Drivers/CMSIS/Include/core_cm0.h **** 
+ 546:Drivers/CMSIS/Include/core_cm0.h **** 
+ 547:Drivers/CMSIS/Include/core_cm0.h **** 
+ 548:Drivers/CMSIS/Include/core_cm0.h **** /*******************************************************************************
+ 549:Drivers/CMSIS/Include/core_cm0.h ****  *                Hardware Abstraction Layer
+ 550:Drivers/CMSIS/Include/core_cm0.h ****   Core Function Interface contains:
+ 551:Drivers/CMSIS/Include/core_cm0.h ****   - Core NVIC Functions
+ 552:Drivers/CMSIS/Include/core_cm0.h ****   - Core SysTick Functions
+ 553:Drivers/CMSIS/Include/core_cm0.h ****   - Core Register Access Functions
+ 554:Drivers/CMSIS/Include/core_cm0.h ****  ******************************************************************************/
+ 555:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 556:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup CMSIS_Core_FunctionInterface Functions and Instructions Reference
+ 557:Drivers/CMSIS/Include/core_cm0.h **** */
+ 558:Drivers/CMSIS/Include/core_cm0.h **** 
+ 559:Drivers/CMSIS/Include/core_cm0.h **** 
+ 560:Drivers/CMSIS/Include/core_cm0.h **** 
+ 561:Drivers/CMSIS/Include/core_cm0.h **** /* ##########################   NVIC functions  #################################### */
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 14
+
+
+ 562:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 563:Drivers/CMSIS/Include/core_cm0.h ****   \ingroup  CMSIS_Core_FunctionInterface
+ 564:Drivers/CMSIS/Include/core_cm0.h ****   \defgroup CMSIS_Core_NVICFunctions NVIC Functions
+ 565:Drivers/CMSIS/Include/core_cm0.h ****   \brief    Functions that manage interrupts and exceptions via the NVIC.
+ 566:Drivers/CMSIS/Include/core_cm0.h ****   @{
+ 567:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 568:Drivers/CMSIS/Include/core_cm0.h **** 
+ 569:Drivers/CMSIS/Include/core_cm0.h **** #ifdef CMSIS_NVIC_VIRTUAL
+ 570:Drivers/CMSIS/Include/core_cm0.h ****   #ifndef CMSIS_NVIC_VIRTUAL_HEADER_FILE
+ 571:Drivers/CMSIS/Include/core_cm0.h ****     #define CMSIS_NVIC_VIRTUAL_HEADER_FILE "cmsis_nvic_virtual.h"
+ 572:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 573:Drivers/CMSIS/Include/core_cm0.h ****   #include CMSIS_NVIC_VIRTUAL_HEADER_FILE
+ 574:Drivers/CMSIS/Include/core_cm0.h **** #else
+ 575:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_SetPriorityGrouping    __NVIC_SetPriorityGrouping
+ 576:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_GetPriorityGrouping    __NVIC_GetPriorityGrouping
+ 577:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_EnableIRQ              __NVIC_EnableIRQ
+ 578:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_GetEnableIRQ           __NVIC_GetEnableIRQ
+ 579:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_DisableIRQ             __NVIC_DisableIRQ
+ 580:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_GetPendingIRQ          __NVIC_GetPendingIRQ
+ 581:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_SetPendingIRQ          __NVIC_SetPendingIRQ
+ 582:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_ClearPendingIRQ        __NVIC_ClearPendingIRQ
+ 583:Drivers/CMSIS/Include/core_cm0.h **** /*#define NVIC_GetActive              __NVIC_GetActive             not available for Cortex-M0 */
+ 584:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_SetPriority            __NVIC_SetPriority
+ 585:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_GetPriority            __NVIC_GetPriority
+ 586:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_SystemReset            __NVIC_SystemReset
+ 587:Drivers/CMSIS/Include/core_cm0.h **** #endif /* CMSIS_NVIC_VIRTUAL */
+ 588:Drivers/CMSIS/Include/core_cm0.h **** 
+ 589:Drivers/CMSIS/Include/core_cm0.h **** #ifdef CMSIS_VECTAB_VIRTUAL
+ 590:Drivers/CMSIS/Include/core_cm0.h ****   #ifndef CMSIS_VECTAB_VIRTUAL_HEADER_FILE
+ 591:Drivers/CMSIS/Include/core_cm0.h ****     #define CMSIS_VECTAB_VIRTUAL_HEADER_FILE "cmsis_vectab_virtual.h"
+ 592:Drivers/CMSIS/Include/core_cm0.h ****   #endif
+ 593:Drivers/CMSIS/Include/core_cm0.h ****   #include CMSIS_VECTAB_VIRTUAL_HEADER_FILE
+ 594:Drivers/CMSIS/Include/core_cm0.h **** #else
+ 595:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_SetVector              __NVIC_SetVector
+ 596:Drivers/CMSIS/Include/core_cm0.h ****   #define NVIC_GetVector              __NVIC_GetVector
+ 597:Drivers/CMSIS/Include/core_cm0.h **** #endif  /* (CMSIS_VECTAB_VIRTUAL) */
+ 598:Drivers/CMSIS/Include/core_cm0.h **** 
+ 599:Drivers/CMSIS/Include/core_cm0.h **** #define NVIC_USER_IRQ_OFFSET          16
+ 600:Drivers/CMSIS/Include/core_cm0.h **** 
+ 601:Drivers/CMSIS/Include/core_cm0.h **** 
+ 602:Drivers/CMSIS/Include/core_cm0.h **** /* The following EXC_RETURN values are saved the LR on exception entry */
+ 603:Drivers/CMSIS/Include/core_cm0.h **** #define EXC_RETURN_HANDLER         (0xFFFFFFF1UL)     /* return to Handler mode, uses MSP after ret
+ 604:Drivers/CMSIS/Include/core_cm0.h **** #define EXC_RETURN_THREAD_MSP      (0xFFFFFFF9UL)     /* return to Thread mode, uses MSP after retu
+ 605:Drivers/CMSIS/Include/core_cm0.h **** #define EXC_RETURN_THREAD_PSP      (0xFFFFFFFDUL)     /* return to Thread mode, uses PSP after retu
+ 606:Drivers/CMSIS/Include/core_cm0.h **** 
+ 607:Drivers/CMSIS/Include/core_cm0.h **** 
+ 608:Drivers/CMSIS/Include/core_cm0.h **** /* Interrupt Priorities are WORD accessible only under Armv6-M                  */
+ 609:Drivers/CMSIS/Include/core_cm0.h **** /* The following MACROS handle generation of the register offset and byte masks */
+ 610:Drivers/CMSIS/Include/core_cm0.h **** #define _BIT_SHIFT(IRQn)         (  ((((uint32_t)(int32_t)(IRQn))         )      &  0x03UL) * 8UL)
+ 611:Drivers/CMSIS/Include/core_cm0.h **** #define _SHP_IDX(IRQn)           ( (((((uint32_t)(int32_t)(IRQn)) & 0x0FUL)-8UL) >>    2UL)      )
+ 612:Drivers/CMSIS/Include/core_cm0.h **** #define _IP_IDX(IRQn)            (   (((uint32_t)(int32_t)(IRQn))                >>    2UL)      )
+ 613:Drivers/CMSIS/Include/core_cm0.h **** 
+ 614:Drivers/CMSIS/Include/core_cm0.h **** #define __NVIC_SetPriorityGrouping(X) (void)(X)
+ 615:Drivers/CMSIS/Include/core_cm0.h **** #define __NVIC_GetPriorityGrouping()  (0U)
+ 616:Drivers/CMSIS/Include/core_cm0.h **** 
+ 617:Drivers/CMSIS/Include/core_cm0.h **** /**
+ 618:Drivers/CMSIS/Include/core_cm0.h ****   \brief   Enable Interrupt
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 15
+
+
+ 619:Drivers/CMSIS/Include/core_cm0.h ****   \details Enables a device specific interrupt in the NVIC interrupt controller.
+ 620:Drivers/CMSIS/Include/core_cm0.h ****   \param [in]      IRQn  Device specific interrupt number.
+ 621:Drivers/CMSIS/Include/core_cm0.h ****   \note    IRQn must not be negative.
+ 622:Drivers/CMSIS/Include/core_cm0.h ****  */
+ 623:Drivers/CMSIS/Include/core_cm0.h **** __STATIC_INLINE void __NVIC_EnableIRQ(IRQn_Type IRQn)
+ 132              		.loc 2 623 22 view .LVU31
+ 133              	.LBB5:
+ 624:Drivers/CMSIS/Include/core_cm0.h **** {
+ 625:Drivers/CMSIS/Include/core_cm0.h ****   if ((int32_t)(IRQn) >= 0)
+ 134              		.loc 2 625 3 view .LVU32
+ 626:Drivers/CMSIS/Include/core_cm0.h ****   {
+ 627:Drivers/CMSIS/Include/core_cm0.h ****     NVIC->ISER[0U] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
+ 135              		.loc 2 627 5 view .LVU33
+ 136              		.loc 2 627 20 is_stmt 0 view .LVU34
+ 137 0020 064A     		ldr	r2, .L5+12
+ 138 0022 8020     		movs	r0, #128
+ 139 0024 0003     		lsls	r0, r0, #12
+ 140 0026 1060     		str	r0, [r2]
+ 141              	.LVL1:
+ 142              		.loc 2 627 20 view .LVU35
+ 143              	.LBE5:
+ 144              	.LBE4:
+  53:Core/Src/Assignmentmain.c ****     TIM14->CR1 |= TIM_CR1_CEN;           // Start timer
+ 145              		.loc 1 53 5 is_stmt 1 view .LVU36
+ 146              		.loc 1 53 10 is_stmt 0 view .LVU37
+ 147 0028 1A68     		ldr	r2, [r3]
+ 148              		.loc 1 53 16 view .LVU38
+ 149 002a 0A43     		orrs	r2, r1
+ 150 002c 1A60     		str	r2, [r3]
+  54:Core/Src/Assignmentmain.c **** }
+ 151              		.loc 1 54 1 view .LVU39
+ 152              		@ sp needed
+ 153 002e 7047     		bx	lr
+ 154              	.L6:
+ 155              		.align	2
+ 156              	.L5:
+ 157 0030 00100240 		.word	1073876992
+ 158 0034 00200040 		.word	1073750016
+ 159 0038 E7030000 		.word	999
+ 160 003c 00E100E0 		.word	-536813312
+ 161              		.cfi_endproc
+ 162              	.LFE44:
+ 164              		.section	.text.TIM14_IRQHandler,"ax",%progbits
+ 165              		.align	1
+ 166              		.global	TIM14_IRQHandler
+ 167              		.syntax unified
+ 168              		.code	16
+ 169              		.thumb_func
+ 171              	TIM14_IRQHandler:
+ 172              	.LFB45:
+  55:Core/Src/Assignmentmain.c **** 
+  56:Core/Src/Assignmentmain.c **** void TIM14_IRQHandler(void) {
+ 173              		.loc 1 56 29 is_stmt 1 view -0
+ 174              		.cfi_startproc
+ 175              		@ args = 0, pretend = 0, frame = 0
+ 176              		@ frame_needed = 0, uses_anonymous_args = 0
+ 177              		@ link register save eliminated.
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 16
+
+
+  57:Core/Src/Assignmentmain.c ****     if (TIM14->SR & TIM_SR_UIF) {
+ 178              		.loc 1 57 5 view .LVU41
+ 179              		.loc 1 57 14 is_stmt 0 view .LVU42
+ 180 0000 164B     		ldr	r3, .L11
+ 181 0002 1B69     		ldr	r3, [r3, #16]
+ 182              		.loc 1 57 8 view .LVU43
+ 183 0004 DB07     		lsls	r3, r3, #31
+ 184 0006 14D5     		bpl	.L7
+  58:Core/Src/Assignmentmain.c ****         TIM14->SR &= ~TIM_SR_UIF; // Clear update interrupt flag
+ 185              		.loc 1 58 9 is_stmt 1 view .LVU44
+ 186              		.loc 1 58 14 is_stmt 0 view .LVU45
+ 187 0008 144A     		ldr	r2, .L11
+ 188 000a 1369     		ldr	r3, [r2, #16]
+ 189              		.loc 1 58 19 view .LVU46
+ 190 000c 0121     		movs	r1, #1
+ 191 000e 8B43     		bics	r3, r1
+ 192 0010 1361     		str	r3, [r2, #16]
+  59:Core/Src/Assignmentmain.c ****         if (startFlag && !stopFlag) { // Ensure we only increment if stopwatch is running and not s
+ 193              		.loc 1 59 9 is_stmt 1 view .LVU47
+ 194              		.loc 1 59 13 is_stmt 0 view .LVU48
+ 195 0012 134B     		ldr	r3, .L11+4
+ 196 0014 1B78     		ldrb	r3, [r3]
+ 197              		.loc 1 59 12 view .LVU49
+ 198 0016 002B     		cmp	r3, #0
+ 199 0018 0BD0     		beq	.L7
+ 200              		.loc 1 59 26 discriminator 1 view .LVU50
+ 201 001a 124B     		ldr	r3, .L11+8
+ 202 001c 1B78     		ldrb	r3, [r3]
+ 203              		.loc 1 59 23 discriminator 1 view .LVU51
+ 204 001e 002B     		cmp	r3, #0
+ 205 0020 07D1     		bne	.L7
+  60:Core/Src/Assignmentmain.c ****             hundredths++;
+ 206              		.loc 1 60 13 is_stmt 1 view .LVU52
+ 207              		.loc 1 60 23 is_stmt 0 view .LVU53
+ 208 0022 114A     		ldr	r2, .L11+12
+ 209 0024 1378     		ldrb	r3, [r2]
+ 210 0026 0133     		adds	r3, r3, #1
+ 211 0028 DBB2     		uxtb	r3, r3
+ 212 002a 1370     		strb	r3, [r2]
+  61:Core/Src/Assignmentmain.c ****             if (hundredths == 100) {
+ 213              		.loc 1 61 13 is_stmt 1 view .LVU54
+ 214              		.loc 1 61 28 is_stmt 0 view .LVU55
+ 215 002c 1378     		ldrb	r3, [r2]
+ 216              		.loc 1 61 16 view .LVU56
+ 217 002e 642B     		cmp	r3, #100
+ 218 0030 00D0     		beq	.L10
+ 219              	.L7:
+  62:Core/Src/Assignmentmain.c ****                 hundredths = 0;
+  63:Core/Src/Assignmentmain.c ****                 seconds++;
+  64:Core/Src/Assignmentmain.c ****                 if (seconds == 60) {
+  65:Core/Src/Assignmentmain.c ****                     seconds = 0;
+  66:Core/Src/Assignmentmain.c ****                     minutes++;
+  67:Core/Src/Assignmentmain.c ****                 }
+  68:Core/Src/Assignmentmain.c ****             }
+  69:Core/Src/Assignmentmain.c ****         }
+  70:Core/Src/Assignmentmain.c ****     }
+  71:Core/Src/Assignmentmain.c **** }
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 17
+
+
+ 220              		.loc 1 71 1 view .LVU57
+ 221              		@ sp needed
+ 222 0032 7047     		bx	lr
+ 223              	.L10:
+  62:Core/Src/Assignmentmain.c ****                 hundredths = 0;
+ 224              		.loc 1 62 17 is_stmt 1 view .LVU58
+  62:Core/Src/Assignmentmain.c ****                 hundredths = 0;
+ 225              		.loc 1 62 28 is_stmt 0 view .LVU59
+ 226 0034 1300     		movs	r3, r2
+ 227 0036 0022     		movs	r2, #0
+ 228 0038 1A70     		strb	r2, [r3]
+  63:Core/Src/Assignmentmain.c ****                 if (seconds == 60) {
+ 229              		.loc 1 63 17 is_stmt 1 view .LVU60
+  63:Core/Src/Assignmentmain.c ****                 if (seconds == 60) {
+ 230              		.loc 1 63 24 is_stmt 0 view .LVU61
+ 231 003a 0C4A     		ldr	r2, .L11+16
+ 232 003c 1378     		ldrb	r3, [r2]
+ 233 003e 0133     		adds	r3, r3, #1
+ 234 0040 DBB2     		uxtb	r3, r3
+ 235 0042 1370     		strb	r3, [r2]
+  64:Core/Src/Assignmentmain.c ****                     seconds = 0;
+ 236              		.loc 1 64 17 is_stmt 1 view .LVU62
+  64:Core/Src/Assignmentmain.c ****                     seconds = 0;
+ 237              		.loc 1 64 29 is_stmt 0 view .LVU63
+ 238 0044 1378     		ldrb	r3, [r2]
+  64:Core/Src/Assignmentmain.c ****                     seconds = 0;
+ 239              		.loc 1 64 20 view .LVU64
+ 240 0046 3C2B     		cmp	r3, #60
+ 241 0048 F3D1     		bne	.L7
+  65:Core/Src/Assignmentmain.c ****                     minutes++;
+ 242              		.loc 1 65 21 is_stmt 1 view .LVU65
+  65:Core/Src/Assignmentmain.c ****                     minutes++;
+ 243              		.loc 1 65 29 is_stmt 0 view .LVU66
+ 244 004a 1300     		movs	r3, r2
+ 245 004c 0022     		movs	r2, #0
+ 246 004e 1A70     		strb	r2, [r3]
+  66:Core/Src/Assignmentmain.c ****                 }
+ 247              		.loc 1 66 21 is_stmt 1 view .LVU67
+  66:Core/Src/Assignmentmain.c ****                 }
+ 248              		.loc 1 66 28 is_stmt 0 view .LVU68
+ 249 0050 074A     		ldr	r2, .L11+20
+ 250 0052 1378     		ldrb	r3, [r2]
+ 251 0054 0133     		adds	r3, r3, #1
+ 252 0056 DBB2     		uxtb	r3, r3
+ 253 0058 1370     		strb	r3, [r2]
+ 254              		.loc 1 71 1 view .LVU69
+ 255 005a EAE7     		b	.L7
+ 256              	.L12:
+ 257              		.align	2
+ 258              	.L11:
+ 259 005c 00200040 		.word	1073750016
+ 260 0060 00000000 		.word	startFlag
+ 261 0064 00000000 		.word	stopFlag
+ 262 0068 00000000 		.word	hundredths
+ 263 006c 00000000 		.word	seconds
+ 264 0070 00000000 		.word	minutes
+ 265              		.cfi_endproc
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 18
+
+
+ 266              	.LFE45:
+ 268              		.section	.text.delay_ms,"ax",%progbits
+ 269              		.align	1
+ 270              		.global	delay_ms
+ 271              		.syntax unified
+ 272              		.code	16
+ 273              		.thumb_func
+ 275              	delay_ms:
+ 276              	.LVL2:
+ 277              	.LFB47:
+  72:Core/Src/Assignmentmain.c **** 
+  73:Core/Src/Assignmentmain.c **** 
+  74:Core/Src/Assignmentmain.c **** void checkPB(void) {
+  75:Core/Src/Assignmentmain.c ****     //static uint32_t lastButtonState = 0xFFFFFFFF; // Assume initially no button is pressed
+  76:Core/Src/Assignmentmain.c ****     //uint32_t currentButtonState = GPIOA->IDR;
+  77:Core/Src/Assignmentmain.c **** 
+  78:Core/Src/Assignmentmain.c ****     // Check each button separately and ensure we only act on press (not release)
+  79:Core/Src/Assignmentmain.c ****     if (!((GPIOA->IDR) & GPIO_IDR_0)) {
+  80:Core/Src/Assignmentmain.c ****         startFlag = TRUE;
+  81:Core/Src/Assignmentmain.c ****         stopFlag = FALSE;
+  82:Core/Src/Assignmentmain.c ****         resetFlag = FALSE;
+  83:Core/Src/Assignmentmain.c ****         lapFlag = FALSE;
+  84:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 0); // Turn on LED at PB0 for START
+  85:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 1) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB1, PB2, PB3
+  86:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+  87:Core/Src/Assignmentmain.c ****         lcd_putstring("Start Pressed");
+  88:Core/Src/Assignmentmain.c ****     }
+  89:Core/Src/Assignmentmain.c ****     if (!((GPIOA->IDR) & GPIO_IDR_1)) {
+  90:Core/Src/Assignmentmain.c ****         lapFlag = TRUE;  // Set lapFlag to TRUE
+  91:Core/Src/Assignmentmain.c ****         // Capture the current time as lap time
+  92:Core/Src/Assignmentmain.c ****         lapMinutes = minutes;
+  93:Core/Src/Assignmentmain.c ****         lapSeconds = seconds;
+  94:Core/Src/Assignmentmain.c ****         lapHundredths = hundredths;
+  95:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 1); // Turn on LED at PB1 for LAP
+  96:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB0, PB2, PB3
+  97:Core/Src/Assignmentmain.c **** 
+  98:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+  99:Core/Src/Assignmentmain.c ****         char lapDisplay[20];
+ 100:Core/Src/Assignmentmain.c ****         snprintf(lapDisplay, sizeof(lapDisplay), "Lap %02d:%02d.%02d", lapMinutes, lapSeconds, lapH
+ 101:Core/Src/Assignmentmain.c ****         lcd_putstring(lapDisplay);
+ 102:Core/Src/Assignmentmain.c ****     }
+ 103:Core/Src/Assignmentmain.c ****     if (!((GPIOA->IDR) & GPIO_IDR_2)) {
+ 104:Core/Src/Assignmentmain.c ****         stopFlag = TRUE; // Stop incrementing
+ 105:Core/Src/Assignmentmain.c ****         startFlag = FALSE; // Make sure it doesn't start again
+ 106:Core/Src/Assignmentmain.c ****         lapFlag = FALSE; // Clear any lap flags
+ 107:Core/Src/Assignmentmain.c **** 
+ 108:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 2); // Turn on LED at PB2 for STOP
+ 109:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 3)); // Turn off LEDs at PB0, PB1, PB3
+ 110:Core/Src/Assignmentmain.c **** 
+ 111:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 112:Core/Src/Assignmentmain.c ****         char stopDisplay[20];
+ 113:Core/Src/Assignmentmain.c ****         snprintf(stopDisplay, sizeof(stopDisplay), "Stopped at %02d:%02d:%02d", minutes, seconds, h
+ 114:Core/Src/Assignmentmain.c ****         lcd_putstring(stopDisplay);
+ 115:Core/Src/Assignmentmain.c ****         delay_ms(50);
+ 116:Core/Src/Assignmentmain.c ****     }
+ 117:Core/Src/Assignmentmain.c ****     if (!((GPIOA->IDR) & GPIO_IDR_3)) {
+ 118:Core/Src/Assignmentmain.c ****         startFlag = FALSE;  // Stop the timer
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 19
+
+
+ 119:Core/Src/Assignmentmain.c ****         stopFlag = TRUE;  // Ensure the timer remains stopped
+ 120:Core/Src/Assignmentmain.c ****         lapFlag = FALSE;  // Clear the lapFlag if set
+ 121:Core/Src/Assignmentmain.c ****         resetFlag = TRUE;  // Indicate that a reset has occurred
+ 122:Core/Src/Assignmentmain.c ****         minutes = 0;
+ 123:Core/Src/Assignmentmain.c ****         seconds = 0;
+ 124:Core/Src/Assignmentmain.c ****         hundredths = 0;
+ 125:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 3); // Turn on LED at PB3 for RESET
+ 126:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 2)); // Turn off LEDs at PB0, PB1, PB2
+ 127:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 128:Core/Src/Assignmentmain.c ****         lcd_putstring("Reset Pressed");
+ 129:Core/Src/Assignmentmain.c ****         lcd_command(LINE_TWO);
+ 130:Core/Src/Assignmentmain.c ****         lcd_putstring("Press SW0...");
+ 131:Core/Src/Assignmentmain.c ****     }
+ 132:Core/Src/Assignmentmain.c ****     //lastButtonState = currentButtonState; // Update the last state
+ 133:Core/Src/Assignmentmain.c ****     delay_ms(50); // Debouncing delay
+ 134:Core/Src/Assignmentmain.c **** }
+ 135:Core/Src/Assignmentmain.c **** 
+ 136:Core/Src/Assignmentmain.c **** 
+ 137:Core/Src/Assignmentmain.c **** void delay_ms(uint32_t milliseconds) {
+ 278              		.loc 1 137 38 is_stmt 1 view -0
+ 279              		.cfi_startproc
+ 280              		@ args = 0, pretend = 0, frame = 0
+ 281              		@ frame_needed = 0, uses_anonymous_args = 0
+ 282              		@ link register save eliminated.
+ 138:Core/Src/Assignmentmain.c ****     for (uint32_t i = 0; i < milliseconds * 4000; i++) {
+ 283              		.loc 1 138 5 view .LVU71
+ 284              	.LBB6:
+ 285              		.loc 1 138 10 view .LVU72
+ 286              		.loc 1 138 19 is_stmt 0 view .LVU73
+ 287 0000 0022     		movs	r2, #0
+ 288              		.loc 1 138 5 view .LVU74
+ 289 0002 01E0     		b	.L14
+ 290              	.LVL3:
+ 291              	.L15:
+ 139:Core/Src/Assignmentmain.c ****         __asm("nop"); // This will depend on your system clock for accurate timing
+ 292              		.loc 1 139 9 is_stmt 1 view .LVU75
+ 293              		.syntax divided
+ 294              	@ 139 "Core/Src/Assignmentmain.c" 1
+ 295 0004 C046     		nop
+ 296              	@ 0 "" 2
+ 138:Core/Src/Assignmentmain.c ****     for (uint32_t i = 0; i < milliseconds * 4000; i++) {
+ 297              		.loc 1 138 52 discriminator 3 view .LVU76
+ 298              		.thumb
+ 299              		.syntax unified
+ 300 0006 0132     		adds	r2, r2, #1
+ 301              	.LVL4:
+ 302              	.L14:
+ 138:Core/Src/Assignmentmain.c ****     for (uint32_t i = 0; i < milliseconds * 4000; i++) {
+ 303              		.loc 1 138 28 discriminator 1 view .LVU77
+ 138:Core/Src/Assignmentmain.c ****     for (uint32_t i = 0; i < milliseconds * 4000; i++) {
+ 304              		.loc 1 138 43 is_stmt 0 discriminator 1 view .LVU78
+ 305 0008 4301     		lsls	r3, r0, #5
+ 306 000a 1B1A     		subs	r3, r3, r0
+ 307 000c 9B00     		lsls	r3, r3, #2
+ 308 000e 1B18     		adds	r3, r3, r0
+ 309 0010 5B01     		lsls	r3, r3, #5
+ 138:Core/Src/Assignmentmain.c ****     for (uint32_t i = 0; i < milliseconds * 4000; i++) {
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 20
+
+
+ 310              		.loc 1 138 28 discriminator 1 view .LVU79
+ 311 0012 9342     		cmp	r3, r2
+ 312 0014 F6D8     		bhi	.L15
+ 313              	.LBE6:
+ 140:Core/Src/Assignmentmain.c ****     }
+ 141:Core/Src/Assignmentmain.c **** }
+ 314              		.loc 1 141 1 view .LVU80
+ 315              		@ sp needed
+ 316 0016 7047     		bx	lr
+ 317              		.cfi_endproc
+ 318              	.LFE47:
+ 320              		.section	.rodata.checkPB.str1.4,"aMS",%progbits,1
+ 321              		.align	2
+ 322              	.LC9:
+ 323 0000 53746172 		.ascii	"Start Pressed\000"
+ 323      74205072 
+ 323      65737365 
+ 323      6400
+ 324 000e 0000     		.align	2
+ 325              	.LC17:
+ 326 0010 4C617020 		.ascii	"Lap %02d:%02d.%02d\000"
+ 326      25303264 
+ 326      3A253032 
+ 326      642E2530 
+ 326      326400
+ 327 0023 00       		.align	2
+ 328              	.LC19:
+ 329 0024 53746F70 		.ascii	"Stopped at %02d:%02d:%02d\000"
+ 329      70656420 
+ 329      61742025 
+ 329      3032643A 
+ 329      25303264 
+ 330 003e 0000     		.align	2
+ 331              	.LC21:
+ 332 0040 52657365 		.ascii	"Reset Pressed\000"
+ 332      74205072 
+ 332      65737365 
+ 332      6400
+ 333 004e 0000     		.align	2
+ 334              	.LC23:
+ 335 0050 50726573 		.ascii	"Press SW0...\000"
+ 335      73205357 
+ 335      302E2E2E 
+ 335      00
+ 336              		.section	.text.checkPB,"ax",%progbits
+ 337              		.align	1
+ 338              		.global	checkPB
+ 339              		.syntax unified
+ 340              		.code	16
+ 341              		.thumb_func
+ 343              	checkPB:
+ 344              	.LFB46:
+  74:Core/Src/Assignmentmain.c ****     //static uint32_t lastButtonState = 0xFFFFFFFF; // Assume initially no button is pressed
+ 345              		.loc 1 74 20 is_stmt 1 view -0
+ 346              		.cfi_startproc
+ 347              		@ args = 0, pretend = 0, frame = 24
+ 348              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 21
+
+
+ 349 0000 70B5     		push	{r4, r5, r6, lr}
+ 350              		.cfi_def_cfa_offset 16
+ 351              		.cfi_offset 4, -16
+ 352              		.cfi_offset 5, -12
+ 353              		.cfi_offset 6, -8
+ 354              		.cfi_offset 14, -4
+ 355 0002 88B0     		sub	sp, sp, #32
+ 356              		.cfi_def_cfa_offset 48
+  79:Core/Src/Assignmentmain.c ****         startFlag = TRUE;
+ 357              		.loc 1 79 5 view .LVU82
+  79:Core/Src/Assignmentmain.c ****         startFlag = TRUE;
+ 358              		.loc 1 79 17 is_stmt 0 view .LVU83
+ 359 0004 9023     		movs	r3, #144
+ 360 0006 DB05     		lsls	r3, r3, #23
+ 361 0008 1B69     		ldr	r3, [r3, #16]
+  79:Core/Src/Assignmentmain.c ****         startFlag = TRUE;
+ 362              		.loc 1 79 8 view .LVU84
+ 363 000a DB07     		lsls	r3, r3, #31
+ 364 000c 14D5     		bpl	.L25
+ 365              	.L17:
+  89:Core/Src/Assignmentmain.c ****         lapFlag = TRUE;  // Set lapFlag to TRUE
+ 366              		.loc 1 89 5 is_stmt 1 view .LVU85
+  89:Core/Src/Assignmentmain.c ****         lapFlag = TRUE;  // Set lapFlag to TRUE
+ 367              		.loc 1 89 17 is_stmt 0 view .LVU86
+ 368 000e 9023     		movs	r3, #144
+ 369 0010 DB05     		lsls	r3, r3, #23
+ 370 0012 1B69     		ldr	r3, [r3, #16]
+  89:Core/Src/Assignmentmain.c ****         lapFlag = TRUE;  // Set lapFlag to TRUE
+ 371              		.loc 1 89 8 view .LVU87
+ 372 0014 9B07     		lsls	r3, r3, #30
+ 373 0016 28D5     		bpl	.L26
+ 374              	.L18:
+ 103:Core/Src/Assignmentmain.c ****         stopFlag = TRUE; // Stop incrementing
+ 375              		.loc 1 103 5 is_stmt 1 view .LVU88
+ 103:Core/Src/Assignmentmain.c ****         stopFlag = TRUE; // Stop incrementing
+ 376              		.loc 1 103 17 is_stmt 0 view .LVU89
+ 377 0018 9023     		movs	r3, #144
+ 378 001a DB05     		lsls	r3, r3, #23
+ 379 001c 1B69     		ldr	r3, [r3, #16]
+ 103:Core/Src/Assignmentmain.c ****         stopFlag = TRUE; // Stop incrementing
+ 380              		.loc 1 103 8 view .LVU90
+ 381 001e 5B07     		lsls	r3, r3, #29
+ 382 0020 50D5     		bpl	.L27
+ 383              	.L19:
+ 117:Core/Src/Assignmentmain.c ****         startFlag = FALSE;  // Stop the timer
+ 384              		.loc 1 117 5 is_stmt 1 view .LVU91
+ 117:Core/Src/Assignmentmain.c ****         startFlag = FALSE;  // Stop the timer
+ 385              		.loc 1 117 17 is_stmt 0 view .LVU92
+ 386 0022 9023     		movs	r3, #144
+ 387 0024 DB05     		lsls	r3, r3, #23
+ 388 0026 1B69     		ldr	r3, [r3, #16]
+ 117:Core/Src/Assignmentmain.c ****         startFlag = FALSE;  // Stop the timer
+ 389              		.loc 1 117 8 view .LVU93
+ 390 0028 1B07     		lsls	r3, r3, #28
+ 391 002a 00D4     		bmi	.LCB284
+ 392 002c 73E0     		b	.L28	@long jump
+ 393              	.LCB284:
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 22
+
+
+ 394              	.L20:
+ 133:Core/Src/Assignmentmain.c **** }
+ 395              		.loc 1 133 5 is_stmt 1 view .LVU94
+ 396 002e 3220     		movs	r0, #50
+ 397 0030 FFF7FEFF 		bl	delay_ms
+ 398              	.LVL5:
+ 134:Core/Src/Assignmentmain.c **** 
+ 399              		.loc 1 134 1 is_stmt 0 view .LVU95
+ 400 0034 08B0     		add	sp, sp, #32
+ 401              		@ sp needed
+ 402 0036 70BD     		pop	{r4, r5, r6, pc}
+ 403              	.L25:
+  80:Core/Src/Assignmentmain.c ****         stopFlag = FALSE;
+ 404              		.loc 1 80 9 is_stmt 1 view .LVU96
+  80:Core/Src/Assignmentmain.c ****         stopFlag = FALSE;
+ 405              		.loc 1 80 19 is_stmt 0 view .LVU97
+ 406 0038 4A4B     		ldr	r3, .L29
+ 407 003a 0121     		movs	r1, #1
+ 408 003c 1970     		strb	r1, [r3]
+  81:Core/Src/Assignmentmain.c ****         resetFlag = FALSE;
+ 409              		.loc 1 81 9 is_stmt 1 view .LVU98
+  81:Core/Src/Assignmentmain.c ****         resetFlag = FALSE;
+ 410              		.loc 1 81 18 is_stmt 0 view .LVU99
+ 411 003e 4A4A     		ldr	r2, .L29+4
+ 412 0040 0023     		movs	r3, #0
+ 413 0042 1370     		strb	r3, [r2]
+  82:Core/Src/Assignmentmain.c ****         lapFlag = FALSE;
+ 414              		.loc 1 82 9 is_stmt 1 view .LVU100
+  82:Core/Src/Assignmentmain.c ****         lapFlag = FALSE;
+ 415              		.loc 1 82 19 is_stmt 0 view .LVU101
+ 416 0044 494A     		ldr	r2, .L29+8
+ 417 0046 1370     		strb	r3, [r2]
+  83:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 0); // Turn on LED at PB0 for START
+ 418              		.loc 1 83 9 is_stmt 1 view .LVU102
+  83:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 0); // Turn on LED at PB0 for START
+ 419              		.loc 1 83 17 is_stmt 0 view .LVU103
+ 420 0048 494A     		ldr	r2, .L29+12
+ 421 004a 1370     		strb	r3, [r2]
+  84:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 1) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB1, PB2, PB3
+ 422              		.loc 1 84 9 is_stmt 1 view .LVU104
+  84:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 1) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB1, PB2, PB3
+ 423              		.loc 1 84 14 is_stmt 0 view .LVU105
+ 424 004c 494B     		ldr	r3, .L29+16
+ 425 004e 5A69     		ldr	r2, [r3, #20]
+  84:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 1) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB1, PB2, PB3
+ 426              		.loc 1 84 20 view .LVU106
+ 427 0050 0A43     		orrs	r2, r1
+ 428 0052 5A61     		str	r2, [r3, #20]
+  85:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 429              		.loc 1 85 9 is_stmt 1 view .LVU107
+  85:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 430              		.loc 1 85 14 is_stmt 0 view .LVU108
+ 431 0054 5A69     		ldr	r2, [r3, #20]
+  85:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 432              		.loc 1 85 20 view .LVU109
+ 433 0056 0D31     		adds	r1, r1, #13
+ 434 0058 8A43     		bics	r2, r1
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 23
+
+
+ 435 005a 5A61     		str	r2, [r3, #20]
+  86:Core/Src/Assignmentmain.c ****         lcd_putstring("Start Pressed");
+ 436              		.loc 1 86 9 is_stmt 1 view .LVU110
+ 437 005c 0120     		movs	r0, #1
+ 438 005e FFF7FEFF 		bl	lcd_command
+ 439              	.LVL6:
+  87:Core/Src/Assignmentmain.c ****     }
+ 440              		.loc 1 87 9 view .LVU111
+ 441 0062 4548     		ldr	r0, .L29+20
+ 442 0064 FFF7FEFF 		bl	lcd_putstring
+ 443              	.LVL7:
+ 444 0068 D1E7     		b	.L17
+ 445              	.L26:
+ 446              	.LBB7:
+  90:Core/Src/Assignmentmain.c ****         // Capture the current time as lap time
+ 447              		.loc 1 90 9 view .LVU112
+  90:Core/Src/Assignmentmain.c ****         // Capture the current time as lap time
+ 448              		.loc 1 90 17 is_stmt 0 view .LVU113
+ 449 006a 414B     		ldr	r3, .L29+12
+ 450 006c 0122     		movs	r2, #1
+ 451 006e 1A70     		strb	r2, [r3]
+  92:Core/Src/Assignmentmain.c ****         lapSeconds = seconds;
+ 452              		.loc 1 92 9 is_stmt 1 view .LVU114
+  92:Core/Src/Assignmentmain.c ****         lapSeconds = seconds;
+ 453              		.loc 1 92 20 is_stmt 0 view .LVU115
+ 454 0070 424B     		ldr	r3, .L29+24
+ 455 0072 1B78     		ldrb	r3, [r3]
+ 456 0074 DBB2     		uxtb	r3, r3
+ 457 0076 424E     		ldr	r6, .L29+28
+ 458 0078 3370     		strb	r3, [r6]
+  93:Core/Src/Assignmentmain.c ****         lapHundredths = hundredths;
+ 459              		.loc 1 93 9 is_stmt 1 view .LVU116
+  93:Core/Src/Assignmentmain.c ****         lapHundredths = hundredths;
+ 460              		.loc 1 93 20 is_stmt 0 view .LVU117
+ 461 007a 424B     		ldr	r3, .L29+32
+ 462 007c 1B78     		ldrb	r3, [r3]
+ 463 007e DBB2     		uxtb	r3, r3
+ 464 0080 414D     		ldr	r5, .L29+36
+ 465 0082 2B70     		strb	r3, [r5]
+  94:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 1); // Turn on LED at PB1 for LAP
+ 466              		.loc 1 94 9 is_stmt 1 view .LVU118
+  94:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 1); // Turn on LED at PB1 for LAP
+ 467              		.loc 1 94 23 is_stmt 0 view .LVU119
+ 468 0084 414B     		ldr	r3, .L29+40
+ 469 0086 1B78     		ldrb	r3, [r3]
+ 470 0088 DBB2     		uxtb	r3, r3
+ 471 008a 414C     		ldr	r4, .L29+44
+ 472 008c 2370     		strb	r3, [r4]
+  95:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB0, PB2, PB3
+ 473              		.loc 1 95 9 is_stmt 1 view .LVU120
+  95:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB0, PB2, PB3
+ 474              		.loc 1 95 14 is_stmt 0 view .LVU121
+ 475 008e 394B     		ldr	r3, .L29+16
+ 476 0090 5A69     		ldr	r2, [r3, #20]
+  95:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 2) | (1 << 3)); // Turn off LEDs at PB0, PB2, PB3
+ 477              		.loc 1 95 20 view .LVU122
+ 478 0092 0221     		movs	r1, #2
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 24
+
+
+ 479 0094 0A43     		orrs	r2, r1
+ 480 0096 5A61     		str	r2, [r3, #20]
+  96:Core/Src/Assignmentmain.c **** 
+ 481              		.loc 1 96 9 is_stmt 1 view .LVU123
+  96:Core/Src/Assignmentmain.c **** 
+ 482              		.loc 1 96 14 is_stmt 0 view .LVU124
+ 483 0098 5A69     		ldr	r2, [r3, #20]
+  96:Core/Src/Assignmentmain.c **** 
+ 484              		.loc 1 96 20 view .LVU125
+ 485 009a 0B31     		adds	r1, r1, #11
+ 486 009c 8A43     		bics	r2, r1
+ 487 009e 5A61     		str	r2, [r3, #20]
+  98:Core/Src/Assignmentmain.c ****         char lapDisplay[20];
+ 488              		.loc 1 98 9 is_stmt 1 view .LVU126
+ 489 00a0 0120     		movs	r0, #1
+ 490 00a2 FFF7FEFF 		bl	lcd_command
+ 491              	.LVL8:
+  99:Core/Src/Assignmentmain.c ****         snprintf(lapDisplay, sizeof(lapDisplay), "Lap %02d:%02d.%02d", lapMinutes, lapSeconds, lapH
+ 492              		.loc 1 99 9 view .LVU127
+ 100:Core/Src/Assignmentmain.c ****         lcd_putstring(lapDisplay);
+ 493              		.loc 1 100 9 view .LVU128
+ 494 00a6 3378     		ldrb	r3, [r6]
+ 495 00a8 DBB2     		uxtb	r3, r3
+ 496 00aa 2978     		ldrb	r1, [r5]
+ 497 00ac 2078     		ldrb	r0, [r4]
+ 498 00ae 394A     		ldr	r2, .L29+48
+ 499 00b0 0190     		str	r0, [sp, #4]
+ 500 00b2 0091     		str	r1, [sp]
+ 501 00b4 1421     		movs	r1, #20
+ 502 00b6 03A8     		add	r0, sp, #12
+ 503 00b8 FFF7FEFF 		bl	snprintf
+ 504              	.LVL9:
+ 101:Core/Src/Assignmentmain.c ****     }
+ 505              		.loc 1 101 9 view .LVU129
+ 506 00bc 03A8     		add	r0, sp, #12
+ 507 00be FFF7FEFF 		bl	lcd_putstring
+ 508              	.LVL10:
+ 509 00c2 A9E7     		b	.L18
+ 510              	.L27:
+ 511              	.LBE7:
+ 512              	.LBB8:
+ 104:Core/Src/Assignmentmain.c ****         startFlag = FALSE; // Make sure it doesn't start again
+ 513              		.loc 1 104 9 view .LVU130
+ 104:Core/Src/Assignmentmain.c ****         startFlag = FALSE; // Make sure it doesn't start again
+ 514              		.loc 1 104 18 is_stmt 0 view .LVU131
+ 515 00c4 284B     		ldr	r3, .L29+4
+ 516 00c6 0122     		movs	r2, #1
+ 517 00c8 1A70     		strb	r2, [r3]
+ 105:Core/Src/Assignmentmain.c ****         lapFlag = FALSE; // Clear any lap flags
+ 518              		.loc 1 105 9 is_stmt 1 view .LVU132
+ 105:Core/Src/Assignmentmain.c ****         lapFlag = FALSE; // Clear any lap flags
+ 519              		.loc 1 105 19 is_stmt 0 view .LVU133
+ 520 00ca 264B     		ldr	r3, .L29
+ 521 00cc 0022     		movs	r2, #0
+ 522 00ce 1A70     		strb	r2, [r3]
+ 106:Core/Src/Assignmentmain.c **** 
+ 523              		.loc 1 106 9 is_stmt 1 view .LVU134
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 25
+
+
+ 106:Core/Src/Assignmentmain.c **** 
+ 524              		.loc 1 106 17 is_stmt 0 view .LVU135
+ 525 00d0 274B     		ldr	r3, .L29+12
+ 526 00d2 1A70     		strb	r2, [r3]
+ 108:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 3)); // Turn off LEDs at PB0, PB1, PB3
+ 527              		.loc 1 108 9 is_stmt 1 view .LVU136
+ 108:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 3)); // Turn off LEDs at PB0, PB1, PB3
+ 528              		.loc 1 108 14 is_stmt 0 view .LVU137
+ 529 00d4 274B     		ldr	r3, .L29+16
+ 530 00d6 5A69     		ldr	r2, [r3, #20]
+ 108:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 3)); // Turn off LEDs at PB0, PB1, PB3
+ 531              		.loc 1 108 20 view .LVU138
+ 532 00d8 0421     		movs	r1, #4
+ 533 00da 0A43     		orrs	r2, r1
+ 534 00dc 5A61     		str	r2, [r3, #20]
+ 109:Core/Src/Assignmentmain.c **** 
+ 535              		.loc 1 109 9 is_stmt 1 view .LVU139
+ 109:Core/Src/Assignmentmain.c **** 
+ 536              		.loc 1 109 14 is_stmt 0 view .LVU140
+ 537 00de 5A69     		ldr	r2, [r3, #20]
+ 109:Core/Src/Assignmentmain.c **** 
+ 538              		.loc 1 109 20 view .LVU141
+ 539 00e0 0731     		adds	r1, r1, #7
+ 540 00e2 8A43     		bics	r2, r1
+ 541 00e4 5A61     		str	r2, [r3, #20]
+ 111:Core/Src/Assignmentmain.c ****         char stopDisplay[20];
+ 542              		.loc 1 111 9 is_stmt 1 view .LVU142
+ 543 00e6 0120     		movs	r0, #1
+ 544 00e8 FFF7FEFF 		bl	lcd_command
+ 545              	.LVL11:
+ 112:Core/Src/Assignmentmain.c ****         snprintf(stopDisplay, sizeof(stopDisplay), "Stopped at %02d:%02d:%02d", minutes, seconds, h
+ 546              		.loc 1 112 9 view .LVU143
+ 113:Core/Src/Assignmentmain.c ****         lcd_putstring(stopDisplay);
+ 547              		.loc 1 113 9 view .LVU144
+ 548 00ec 234B     		ldr	r3, .L29+24
+ 549 00ee 1B78     		ldrb	r3, [r3]
+ 550 00f0 DBB2     		uxtb	r3, r3
+ 551 00f2 244A     		ldr	r2, .L29+32
+ 552 00f4 1178     		ldrb	r1, [r2]
+ 553 00f6 254A     		ldr	r2, .L29+40
+ 554 00f8 1078     		ldrb	r0, [r2]
+ 555 00fa 274A     		ldr	r2, .L29+52
+ 556 00fc 0190     		str	r0, [sp, #4]
+ 557 00fe 0091     		str	r1, [sp]
+ 558 0100 1421     		movs	r1, #20
+ 559 0102 03A8     		add	r0, sp, #12
+ 560 0104 FFF7FEFF 		bl	snprintf
+ 561              	.LVL12:
+ 114:Core/Src/Assignmentmain.c ****         delay_ms(50);
+ 562              		.loc 1 114 9 view .LVU145
+ 563 0108 03A8     		add	r0, sp, #12
+ 564 010a FFF7FEFF 		bl	lcd_putstring
+ 565              	.LVL13:
+ 115:Core/Src/Assignmentmain.c ****     }
+ 566              		.loc 1 115 9 view .LVU146
+ 567 010e 3220     		movs	r0, #50
+ 568 0110 FFF7FEFF 		bl	delay_ms
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 26
+
+
+ 569              	.LVL14:
+ 570 0114 85E7     		b	.L19
+ 571              	.L28:
+ 572              	.LBE8:
+ 118:Core/Src/Assignmentmain.c ****         stopFlag = TRUE;  // Ensure the timer remains stopped
+ 573              		.loc 1 118 9 view .LVU147
+ 118:Core/Src/Assignmentmain.c ****         stopFlag = TRUE;  // Ensure the timer remains stopped
+ 574              		.loc 1 118 19 is_stmt 0 view .LVU148
+ 575 0116 134A     		ldr	r2, .L29
+ 576 0118 0023     		movs	r3, #0
+ 577 011a 1370     		strb	r3, [r2]
+ 119:Core/Src/Assignmentmain.c ****         lapFlag = FALSE;  // Clear the lapFlag if set
+ 578              		.loc 1 119 9 is_stmt 1 view .LVU149
+ 119:Core/Src/Assignmentmain.c ****         lapFlag = FALSE;  // Clear the lapFlag if set
+ 579              		.loc 1 119 18 is_stmt 0 view .LVU150
+ 580 011c 124A     		ldr	r2, .L29+4
+ 581 011e 0121     		movs	r1, #1
+ 582 0120 1170     		strb	r1, [r2]
+ 120:Core/Src/Assignmentmain.c ****         resetFlag = TRUE;  // Indicate that a reset has occurred
+ 583              		.loc 1 120 9 is_stmt 1 view .LVU151
+ 120:Core/Src/Assignmentmain.c ****         resetFlag = TRUE;  // Indicate that a reset has occurred
+ 584              		.loc 1 120 17 is_stmt 0 view .LVU152
+ 585 0122 134A     		ldr	r2, .L29+12
+ 586 0124 1370     		strb	r3, [r2]
+ 121:Core/Src/Assignmentmain.c ****         minutes = 0;
+ 587              		.loc 1 121 9 is_stmt 1 view .LVU153
+ 121:Core/Src/Assignmentmain.c ****         minutes = 0;
+ 588              		.loc 1 121 19 is_stmt 0 view .LVU154
+ 589 0126 114A     		ldr	r2, .L29+8
+ 590 0128 1170     		strb	r1, [r2]
+ 122:Core/Src/Assignmentmain.c ****         seconds = 0;
+ 591              		.loc 1 122 9 is_stmt 1 view .LVU155
+ 122:Core/Src/Assignmentmain.c ****         seconds = 0;
+ 592              		.loc 1 122 17 is_stmt 0 view .LVU156
+ 593 012a 144A     		ldr	r2, .L29+24
+ 594 012c 1370     		strb	r3, [r2]
+ 123:Core/Src/Assignmentmain.c ****         hundredths = 0;
+ 595              		.loc 1 123 9 is_stmt 1 view .LVU157
+ 123:Core/Src/Assignmentmain.c ****         hundredths = 0;
+ 596              		.loc 1 123 17 is_stmt 0 view .LVU158
+ 597 012e 154A     		ldr	r2, .L29+32
+ 598 0130 1370     		strb	r3, [r2]
+ 124:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 3); // Turn on LED at PB3 for RESET
+ 599              		.loc 1 124 9 is_stmt 1 view .LVU159
+ 124:Core/Src/Assignmentmain.c ****         GPIOB->ODR |= (1 << 3); // Turn on LED at PB3 for RESET
+ 600              		.loc 1 124 20 is_stmt 0 view .LVU160
+ 601 0132 164A     		ldr	r2, .L29+40
+ 602 0134 1370     		strb	r3, [r2]
+ 125:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 2)); // Turn off LEDs at PB0, PB1, PB2
+ 603              		.loc 1 125 9 is_stmt 1 view .LVU161
+ 125:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 2)); // Turn off LEDs at PB0, PB1, PB2
+ 604              		.loc 1 125 14 is_stmt 0 view .LVU162
+ 605 0136 0F4B     		ldr	r3, .L29+16
+ 606 0138 5A69     		ldr	r2, [r3, #20]
+ 125:Core/Src/Assignmentmain.c ****         GPIOB->ODR &= ~((1 << 0) | (1 << 1) | (1 << 2)); // Turn off LEDs at PB0, PB1, PB2
+ 607              		.loc 1 125 20 view .LVU163
+ 608 013a 0731     		adds	r1, r1, #7
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 27
+
+
+ 609 013c 0A43     		orrs	r2, r1
+ 610 013e 5A61     		str	r2, [r3, #20]
+ 126:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 611              		.loc 1 126 9 is_stmt 1 view .LVU164
+ 126:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 612              		.loc 1 126 14 is_stmt 0 view .LVU165
+ 613 0140 5A69     		ldr	r2, [r3, #20]
+ 126:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 614              		.loc 1 126 20 view .LVU166
+ 615 0142 0139     		subs	r1, r1, #1
+ 616 0144 8A43     		bics	r2, r1
+ 617 0146 5A61     		str	r2, [r3, #20]
+ 127:Core/Src/Assignmentmain.c ****         lcd_putstring("Reset Pressed");
+ 618              		.loc 1 127 9 is_stmt 1 view .LVU167
+ 619 0148 0120     		movs	r0, #1
+ 620 014a FFF7FEFF 		bl	lcd_command
+ 621              	.LVL15:
+ 128:Core/Src/Assignmentmain.c ****         lcd_command(LINE_TWO);
+ 622              		.loc 1 128 9 view .LVU168
+ 623 014e 1348     		ldr	r0, .L29+56
+ 624 0150 FFF7FEFF 		bl	lcd_putstring
+ 625              	.LVL16:
+ 129:Core/Src/Assignmentmain.c ****         lcd_putstring("Press SW0...");
+ 626              		.loc 1 129 9 view .LVU169
+ 627 0154 C020     		movs	r0, #192
+ 628 0156 FFF7FEFF 		bl	lcd_command
+ 629              	.LVL17:
+ 130:Core/Src/Assignmentmain.c ****     }
+ 630              		.loc 1 130 9 view .LVU170
+ 631 015a 1148     		ldr	r0, .L29+60
+ 632 015c FFF7FEFF 		bl	lcd_putstring
+ 633              	.LVL18:
+ 634 0160 65E7     		b	.L20
+ 635              	.L30:
+ 636 0162 C046     		.align	2
+ 637              	.L29:
+ 638 0164 00000000 		.word	startFlag
+ 639 0168 00000000 		.word	stopFlag
+ 640 016c 00000000 		.word	resetFlag
+ 641 0170 00000000 		.word	lapFlag
+ 642 0174 00040048 		.word	1207960576
+ 643 0178 00000000 		.word	.LC9
+ 644 017c 00000000 		.word	minutes
+ 645 0180 00000000 		.word	lapMinutes
+ 646 0184 00000000 		.word	seconds
+ 647 0188 00000000 		.word	lapSeconds
+ 648 018c 00000000 		.word	hundredths
+ 649 0190 00000000 		.word	lapHundredths
+ 650 0194 10000000 		.word	.LC17
+ 651 0198 24000000 		.word	.LC19
+ 652 019c 40000000 		.word	.LC21
+ 653 01a0 50000000 		.word	.LC23
+ 654              		.cfi_endproc
+ 655              	.LFE46:
+ 657              		.section	.rodata.display.str1.4,"aMS",%progbits,1
+ 658              		.align	2
+ 659              	.LC26:
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 28
+
+
+ 660 0000 53746F70 		.ascii	"Stop Watch\000"
+ 660      20576174 
+ 660      636800
+ 661 000b 00       		.align	2
+ 662              	.LC35:
+ 663 000c 25303264 		.ascii	"%02d:%02d.%02d\000"
+ 663      3A253032 
+ 663      642E2530 
+ 663      326400
+ 664 001b 00       		.align	2
+ 665              	.LC37:
+ 666 001c 53746F70 		.ascii	"Stopped %02d:%02d.%02d\000"
+ 666      70656420 
+ 666      25303264 
+ 666      3A253032 
+ 666      642E2530 
+ 667              		.section	.text.display,"ax",%progbits
+ 668              		.align	1
+ 669              		.global	display
+ 670              		.syntax unified
+ 671              		.code	16
+ 672              		.thumb_func
+ 674              	display:
+ 675              	.LFB48:
+ 142:Core/Src/Assignmentmain.c **** 
+ 143:Core/Src/Assignmentmain.c **** void display(void) {
+ 676              		.loc 1 143 20 view -0
+ 677              		.cfi_startproc
+ 678              		@ args = 0, pretend = 0, frame = 24
+ 679              		@ frame_needed = 0, uses_anonymous_args = 0
+ 680 0000 00B5     		push	{lr}
+ 681              		.cfi_def_cfa_offset 4
+ 682              		.cfi_offset 14, -4
+ 683 0002 89B0     		sub	sp, sp, #36
+ 684              		.cfi_def_cfa_offset 40
+ 144:Core/Src/Assignmentmain.c ****     if (resetFlag) {
+ 685              		.loc 1 144 5 view .LVU172
+ 686              		.loc 1 144 9 is_stmt 0 view .LVU173
+ 687 0004 264B     		ldr	r3, .L37
+ 688 0006 1B78     		ldrb	r3, [r3]
+ 689              		.loc 1 144 8 view .LVU174
+ 690 0008 002B     		cmp	r3, #0
+ 691 000a 20D1     		bne	.L35
+ 145:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 146:Core/Src/Assignmentmain.c ****         lcd_putstring("Stop Watch");
+ 147:Core/Src/Assignmentmain.c ****         lcd_command(LINE_TWO);
+ 148:Core/Src/Assignmentmain.c ****         lcd_putstring("Press SW0...");
+ 149:Core/Src/Assignmentmain.c ****     } else if (startFlag && !stopFlag) {
+ 692              		.loc 1 149 12 is_stmt 1 view .LVU175
+ 693              		.loc 1 149 16 is_stmt 0 view .LVU176
+ 694 000c 254B     		ldr	r3, .L37+4
+ 695 000e 1B78     		ldrb	r3, [r3]
+ 696              		.loc 1 149 15 view .LVU177
+ 697 0010 002B     		cmp	r3, #0
+ 698 0012 29D0     		beq	.L34
+ 699              		.loc 1 149 29 discriminator 1 view .LVU178
+ 700 0014 244B     		ldr	r3, .L37+8
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 29
+
+
+ 701 0016 1B78     		ldrb	r3, [r3]
+ 702              		.loc 1 149 26 discriminator 1 view .LVU179
+ 703 0018 002B     		cmp	r3, #0
+ 704 001a 25D1     		bne	.L34
+ 150:Core/Src/Assignmentmain.c ****         if (!lapFlag) {  // Check if lapFlag is not set to update the display with running time
+ 705              		.loc 1 150 9 is_stmt 1 view .LVU180
+ 706              		.loc 1 150 13 is_stmt 0 view .LVU181
+ 707 001c 234B     		ldr	r3, .L37+12
+ 708 001e 1B78     		ldrb	r3, [r3]
+ 709              		.loc 1 150 12 view .LVU182
+ 710 0020 002B     		cmp	r3, #0
+ 711 0022 25D1     		bne	.L31
+ 712              	.LBB9:
+ 151:Core/Src/Assignmentmain.c ****             lcd_command(CLEAR);
+ 713              		.loc 1 151 13 is_stmt 1 view .LVU183
+ 714 0024 0120     		movs	r0, #1
+ 715 0026 FFF7FEFF 		bl	lcd_command
+ 716              	.LVL19:
+ 152:Core/Src/Assignmentmain.c ****             char timeDisplay[20];
+ 717              		.loc 1 152 13 view .LVU184
+ 153:Core/Src/Assignmentmain.c ****             snprintf(timeDisplay, sizeof(timeDisplay), "%02d:%02d.%02d", minutes, seconds, hundredt
+ 718              		.loc 1 153 13 view .LVU185
+ 719 002a 214B     		ldr	r3, .L37+16
+ 720 002c 1B78     		ldrb	r3, [r3]
+ 721 002e DBB2     		uxtb	r3, r3
+ 722 0030 204A     		ldr	r2, .L37+20
+ 723 0032 1178     		ldrb	r1, [r2]
+ 724 0034 204A     		ldr	r2, .L37+24
+ 725 0036 1078     		ldrb	r0, [r2]
+ 726 0038 204A     		ldr	r2, .L37+28
+ 727 003a 0190     		str	r0, [sp, #4]
+ 728 003c 0091     		str	r1, [sp]
+ 729 003e 1421     		movs	r1, #20
+ 730 0040 03A8     		add	r0, sp, #12
+ 731 0042 FFF7FEFF 		bl	snprintf
+ 732              	.LVL20:
+ 154:Core/Src/Assignmentmain.c ****             lcd_putstring(timeDisplay);
+ 733              		.loc 1 154 13 view .LVU186
+ 734 0046 03A8     		add	r0, sp, #12
+ 735 0048 FFF7FEFF 		bl	lcd_putstring
+ 736              	.LVL21:
+ 737 004c 10E0     		b	.L31
+ 738              	.L35:
+ 739              	.LBE9:
+ 145:Core/Src/Assignmentmain.c ****         lcd_putstring("Stop Watch");
+ 740              		.loc 1 145 9 view .LVU187
+ 741 004e 0120     		movs	r0, #1
+ 742 0050 FFF7FEFF 		bl	lcd_command
+ 743              	.LVL22:
+ 146:Core/Src/Assignmentmain.c ****         lcd_command(LINE_TWO);
+ 744              		.loc 1 146 9 view .LVU188
+ 745 0054 1A48     		ldr	r0, .L37+32
+ 746 0056 FFF7FEFF 		bl	lcd_putstring
+ 747              	.LVL23:
+ 147:Core/Src/Assignmentmain.c ****         lcd_putstring("Press SW0...");
+ 748              		.loc 1 147 9 view .LVU189
+ 749 005a C020     		movs	r0, #192
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 30
+
+
+ 750 005c FFF7FEFF 		bl	lcd_command
+ 751              	.LVL24:
+ 148:Core/Src/Assignmentmain.c ****     } else if (startFlag && !stopFlag) {
+ 752              		.loc 1 148 9 view .LVU190
+ 753 0060 1848     		ldr	r0, .L37+36
+ 754 0062 FFF7FEFF 		bl	lcd_putstring
+ 755              	.LVL25:
+ 756 0066 03E0     		b	.L31
+ 757              	.L34:
+ 155:Core/Src/Assignmentmain.c ****         }
+ 156:Core/Src/Assignmentmain.c ****         // If lapFlag is set, do nothing as the lap time should still be displayed
+ 157:Core/Src/Assignmentmain.c ****     } else if (stopFlag) {
+ 758              		.loc 1 157 12 view .LVU191
+ 759              		.loc 1 157 16 is_stmt 0 view .LVU192
+ 760 0068 0F4B     		ldr	r3, .L37+8
+ 761 006a 1B78     		ldrb	r3, [r3]
+ 762              		.loc 1 157 15 view .LVU193
+ 763 006c 002B     		cmp	r3, #0
+ 764 006e 01D1     		bne	.L36
+ 765              	.L31:
+ 158:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 159:Core/Src/Assignmentmain.c ****         char stopDisplay[20];
+ 160:Core/Src/Assignmentmain.c ****         snprintf(stopDisplay, sizeof(stopDisplay), "Stopped %02d:%02d.%02d", minutes, seconds, hund
+ 161:Core/Src/Assignmentmain.c ****         lcd_putstring(stopDisplay);
+ 162:Core/Src/Assignmentmain.c ****     }
+ 163:Core/Src/Assignmentmain.c ****     
+ 164:Core/Src/Assignmentmain.c **** }
+ 766              		.loc 1 164 1 view .LVU194
+ 767 0070 09B0     		add	sp, sp, #36
+ 768              		@ sp needed
+ 769 0072 00BD     		pop	{pc}
+ 770              	.L36:
+ 771              	.LBB10:
+ 158:Core/Src/Assignmentmain.c ****         lcd_command(CLEAR);
+ 772              		.loc 1 158 9 is_stmt 1 view .LVU195
+ 773 0074 0120     		movs	r0, #1
+ 774 0076 FFF7FEFF 		bl	lcd_command
+ 775              	.LVL26:
+ 159:Core/Src/Assignmentmain.c ****         snprintf(stopDisplay, sizeof(stopDisplay), "Stopped %02d:%02d.%02d", minutes, seconds, hund
+ 776              		.loc 1 159 9 view .LVU196
+ 160:Core/Src/Assignmentmain.c ****         lcd_putstring(stopDisplay);
+ 777              		.loc 1 160 9 view .LVU197
+ 778 007a 0D4B     		ldr	r3, .L37+16
+ 779 007c 1B78     		ldrb	r3, [r3]
+ 780 007e DBB2     		uxtb	r3, r3
+ 781 0080 0C4A     		ldr	r2, .L37+20
+ 782 0082 1178     		ldrb	r1, [r2]
+ 783 0084 0C4A     		ldr	r2, .L37+24
+ 784 0086 1078     		ldrb	r0, [r2]
+ 785 0088 0F4A     		ldr	r2, .L37+40
+ 786 008a 0190     		str	r0, [sp, #4]
+ 787 008c 0091     		str	r1, [sp]
+ 788 008e 1421     		movs	r1, #20
+ 789 0090 03A8     		add	r0, sp, #12
+ 790 0092 FFF7FEFF 		bl	snprintf
+ 791              	.LVL27:
+ 161:Core/Src/Assignmentmain.c ****     }
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 31
+
+
+ 792              		.loc 1 161 9 view .LVU198
+ 793 0096 03A8     		add	r0, sp, #12
+ 794 0098 FFF7FEFF 		bl	lcd_putstring
+ 795              	.LVL28:
+ 796              	.LBE10:
+ 797              		.loc 1 164 1 is_stmt 0 view .LVU199
+ 798 009c E8E7     		b	.L31
+ 799              	.L38:
+ 800 009e C046     		.align	2
+ 801              	.L37:
+ 802 00a0 00000000 		.word	resetFlag
+ 803 00a4 00000000 		.word	startFlag
+ 804 00a8 00000000 		.word	stopFlag
+ 805 00ac 00000000 		.word	lapFlag
+ 806 00b0 00000000 		.word	minutes
+ 807 00b4 00000000 		.word	seconds
+ 808 00b8 00000000 		.word	hundredths
+ 809 00bc 0C000000 		.word	.LC35
+ 810 00c0 00000000 		.word	.LC26
+ 811 00c4 50000000 		.word	.LC23
+ 812 00c8 1C000000 		.word	.LC37
+ 813              		.cfi_endproc
+ 814              	.LFE48:
+ 816              		.section	.text.main,"ax",%progbits
+ 817              		.align	1
+ 818              		.global	main
+ 819              		.syntax unified
+ 820              		.code	16
+ 821              		.thumb_func
+ 823              	main:
+ 824              	.LFB49:
+ 165:Core/Src/Assignmentmain.c **** 
+ 166:Core/Src/Assignmentmain.c **** 
+ 167:Core/Src/Assignmentmain.c **** int main(void) {
+ 825              		.loc 1 167 16 is_stmt 1 view -0
+ 826              		.cfi_startproc
+ 827              		@ Volatile: function does not return.
+ 828              		@ args = 0, pretend = 0, frame = 0
+ 829              		@ frame_needed = 0, uses_anonymous_args = 0
+ 830 0000 10B5     		push	{r4, lr}
+ 831              		.cfi_def_cfa_offset 8
+ 832              		.cfi_offset 4, -8
+ 833              		.cfi_offset 14, -4
+ 168:Core/Src/Assignmentmain.c ****     SystemInit();  // System Initialization
+ 834              		.loc 1 168 5 view .LVU201
+ 835 0002 FFF7FEFF 		bl	SystemInit
+ 836              	.LVL29:
+ 169:Core/Src/Assignmentmain.c ****     init_LCD();    // Initialize the LCD
+ 837              		.loc 1 169 5 view .LVU202
+ 838 0006 FFF7FEFF 		bl	init_LCD
+ 839              	.LVL30:
+ 170:Core/Src/Assignmentmain.c ****     initGPIO();    // Initialize GPIO
+ 840              		.loc 1 170 5 view .LVU203
+ 841 000a FFF7FEFF 		bl	initGPIO
+ 842              	.LVL31:
+ 171:Core/Src/Assignmentmain.c ****     initTIM14();   // Initialize TIM14
+ 843              		.loc 1 171 5 view .LVU204
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 32
+
+
+ 844 000e FFF7FEFF 		bl	initTIM14
+ 845              	.LVL32:
+ 172:Core/Src/Assignmentmain.c **** 
+ 173:Core/Src/Assignmentmain.c **** 
+ 174:Core/Src/Assignmentmain.c ****     delay_ms(1000);  // Initial delay for stabilization
+ 846              		.loc 1 174 5 view .LVU205
+ 847 0012 FA20     		movs	r0, #250
+ 848 0014 8000     		lsls	r0, r0, #2
+ 849 0016 FFF7FEFF 		bl	delay_ms
+ 850              	.LVL33:
+ 175:Core/Src/Assignmentmain.c **** 
+ 176:Core/Src/Assignmentmain.c ****     // Display initial message
+ 177:Core/Src/Assignmentmain.c ****     lcd_putstring("Stop Watch");
+ 851              		.loc 1 177 5 view .LVU206
+ 852 001a 0848     		ldr	r0, .L41
+ 853 001c FFF7FEFF 		bl	lcd_putstring
+ 854              	.LVL34:
+ 178:Core/Src/Assignmentmain.c ****     lcd_command(LINE_TWO);
+ 855              		.loc 1 178 5 view .LVU207
+ 856 0020 C020     		movs	r0, #192
+ 857 0022 FFF7FEFF 		bl	lcd_command
+ 858              	.LVL35:
+ 179:Core/Src/Assignmentmain.c ****     lcd_putstring("Press SW0...");
+ 859              		.loc 1 179 5 view .LVU208
+ 860 0026 0648     		ldr	r0, .L41+4
+ 861 0028 FFF7FEFF 		bl	lcd_putstring
+ 862              	.LVL36:
+ 863              	.L40:
+ 180:Core/Src/Assignmentmain.c **** 
+ 181:Core/Src/Assignmentmain.c **** 
+ 182:Core/Src/Assignmentmain.c ****     while (1) {
+ 864              		.loc 1 182 5 view .LVU209
+ 183:Core/Src/Assignmentmain.c ****         checkPB();  // Check pushbuttons
+ 865              		.loc 1 183 9 view .LVU210
+ 866 002c FFF7FEFF 		bl	checkPB
+ 867              	.LVL37:
+ 184:Core/Src/Assignmentmain.c ****         display();  // Update display
+ 868              		.loc 1 184 9 view .LVU211
+ 869 0030 FFF7FEFF 		bl	display
+ 870              	.LVL38:
+ 185:Core/Src/Assignmentmain.c ****         delay_ms(100); // Delay to prevent rapid flickering
+ 871              		.loc 1 185 9 discriminator 1 view .LVU212
+ 872 0034 6420     		movs	r0, #100
+ 873 0036 FFF7FEFF 		bl	delay_ms
+ 874              	.LVL39:
+ 182:Core/Src/Assignmentmain.c ****         checkPB();  // Check pushbuttons
+ 875              		.loc 1 182 11 view .LVU213
+ 876 003a F7E7     		b	.L40
+ 877              	.L42:
+ 878              		.align	2
+ 879              	.L41:
+ 880 003c 00000000 		.word	.LC26
+ 881 0040 50000000 		.word	.LC23
+ 882              		.cfi_endproc
+ 883              	.LFE49:
+ 885              		.global	lapHundredths
+ 886              		.section	.bss.lapHundredths,"aw",%nobits
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 33
+
+
+ 889              	lapHundredths:
+ 890 0000 00       		.space	1
+ 891              		.global	lapSeconds
+ 892              		.section	.bss.lapSeconds,"aw",%nobits
+ 895              	lapSeconds:
+ 896 0000 00       		.space	1
+ 897              		.global	lapMinutes
+ 898              		.section	.bss.lapMinutes,"aw",%nobits
+ 901              	lapMinutes:
+ 902 0000 00       		.space	1
+ 903              		.global	hundredths
+ 904              		.section	.bss.hundredths,"aw",%nobits
+ 907              	hundredths:
+ 908 0000 00       		.space	1
+ 909              		.global	seconds
+ 910              		.section	.bss.seconds,"aw",%nobits
+ 913              	seconds:
+ 914 0000 00       		.space	1
+ 915              		.global	minutes
+ 916              		.section	.bss.minutes,"aw",%nobits
+ 919              	minutes:
+ 920 0000 00       		.space	1
+ 921              		.global	resetFlag
+ 922              		.section	.data.resetFlag,"aw"
+ 925              	resetFlag:
+ 926 0000 01       		.byte	1
+ 927              		.global	stopFlag
+ 928              		.section	.data.stopFlag,"aw"
+ 931              	stopFlag:
+ 932 0000 01       		.byte	1
+ 933              		.global	lapFlag
+ 934              		.section	.bss.lapFlag,"aw",%nobits
+ 937              	lapFlag:
+ 938 0000 00       		.space	1
+ 939              		.global	startFlag
+ 940              		.section	.bss.startFlag,"aw",%nobits
+ 943              	startFlag:
+ 944 0000 00       		.space	1
+ 945              		.text
+ 946              	.Letext0:
+ 947              		.file 3 "C:/Users/Karabo/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-t
+ 948              		.file 4 "C:/Users/Karabo/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-t
+ 949              		.file 5 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f051x8.h"
+ 950              		.file 6 "C:/Users/Karabo/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-t
+ 951              		.file 7 "Core/Inc/lcd_stm32f0.h"
+ 952              		.file 8 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/system_stm32f0xx.h"
+ 953              		.file 9 "C:/Users/Karabo/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-t
+ARM GAS  C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s 			page 34
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 Assignmentmain.c
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:19     .text.initGPIO:00000000 $t
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:25     .text.initGPIO:00000000 initGPIO
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:82     .text.initGPIO:00000038 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:88     .text.initTIM14:00000000 $t
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:94     .text.initTIM14:00000000 initTIM14
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:157    .text.initTIM14:00000030 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:165    .text.TIM14_IRQHandler:00000000 $t
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:171    .text.TIM14_IRQHandler:00000000 TIM14_IRQHandler
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:259    .text.TIM14_IRQHandler:0000005c $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:943    .bss.startFlag:00000000 startFlag
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:931    .data.stopFlag:00000000 stopFlag
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:907    .bss.hundredths:00000000 hundredths
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:913    .bss.seconds:00000000 seconds
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:919    .bss.minutes:00000000 minutes
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:269    .text.delay_ms:00000000 $t
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:275    .text.delay_ms:00000000 delay_ms
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:321    .rodata.checkPB.str1.4:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:337    .text.checkPB:00000000 $t
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:343    .text.checkPB:00000000 checkPB
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:638    .text.checkPB:00000164 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:925    .data.resetFlag:00000000 resetFlag
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:937    .bss.lapFlag:00000000 lapFlag
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:901    .bss.lapMinutes:00000000 lapMinutes
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:895    .bss.lapSeconds:00000000 lapSeconds
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:889    .bss.lapHundredths:00000000 lapHundredths
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:658    .rodata.display.str1.4:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:668    .text.display:00000000 $t
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:674    .text.display:00000000 display
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:802    .text.display:000000a0 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:817    .text.main:00000000 $t
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:823    .text.main:00000000 main
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:880    .text.main:0000003c $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:890    .bss.lapHundredths:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:896    .bss.lapSeconds:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:902    .bss.lapMinutes:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:908    .bss.hundredths:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:914    .bss.seconds:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:920    .bss.minutes:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:938    .bss.lapFlag:00000000 $d
+C:\Users\Karabo\AppData\Local\Temp\cchAVBEH.s:944    .bss.startFlag:00000000 $d
+
+UNDEFINED SYMBOLS
+lcd_command
+lcd_putstring
+snprintf
+SystemInit
+init_LCD
